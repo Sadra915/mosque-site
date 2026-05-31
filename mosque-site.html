@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SA CYBER NET</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    margin:0;
+    background:#050607;
+    color:#00ff9d;
+    font-family:monospace;
+}
+
+/* HEADER */
+header{
+    text-align:center;
+    padding:20px;
+    font-size:26px;
+    color:#ff7a00;
+    text-shadow:0 0 10px #ff7a00;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    gap:20px;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+/* CARD */
+.card{
+    border:1px solid #00ff9d;
+    border-radius:12px;
+    padding:15px;
+    background:rgba(0,255,157,0.05);
+    box-shadow:0 0 15px rgba(0,255,157,0.2);
+}
+
+/* LIVE BAR */
+.bar{
+    height:10px;
+    width:0%;
+    background:#00ff9d;
+    box-shadow:0 0 10px #00ff9d;
+    transition:width 0.4s;
+}
+
+/* TEXT */
+.neon{
+    text-shadow:0 0 5px #00ff9d, 0 0 10px #00ff9d;
+}
+
+/* CHART */
+canvas{
+    background:#0a0c0f;
+    border-radius:10px;
+    padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🌐 SA CYBER NET CONTROL ⚡</header>
+
+<div class="grid">
+
+<!-- DATA FROM JSON -->
+<div class="card">
+    <div class="neon">📡 LIVE MESSAGE</div>
+    <p id="msg">Loading...</p>
+</div>
+
+<!-- LIVE BAR -->
+<div class="card">
+    <div class="neon">📊 DATA FLOW</div>
+    <div class="bar" id="bar"></div>
+</div>
+
+<!-- CHART -->
+<div class="card">
+    <div class="neon">📈 NETWORK ACTIVITY</div>
+    <canvas id="chart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   📡 LOAD JSON MESSAGE
+========================= */
+fetch("data.json")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("msg").innerText = data.message;
+});
+
+/* =========================
+   📊 LIVE BAR
+========================= */
+function updateBar(){
+    let val = Math.random()*100;
+    document.getElementById("bar").style.width = val + "%";
+}
+setInterval(updateBar, 800);
+
+/* =========================
+   📈 LIVE CHART
+========================= */
+const ctx = document.getElementById("chart");
+
+const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+        labels: Array(10).fill(""),
+        datasets: [{
+            data: Array(10).fill(50),
+            borderColor: "#00ff9d",
+            tension: 0.4
+        }]
+    },
+    options: {
+        animation:false,
+        plugins:{legend:{display:false}},
+        scales:{
+            x:{display:false},
+            y:{ticks:{color:"#00ff9d"}}
+        }
+    }
+});
+
+function updateChart(){
+    chart.data.datasets[0].data.shift();
+    chart.data.datasets[0].data.push(Math.random()*100);
+    chart.update();
+}
+setInterval(updateChart, 700);
+
+/* =========================
+   🎧 SOUND ENGINE
+========================= */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(freq, time){
+    let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.frequency.value = freq;
+    osc.type = "sine";
+
+    gain.gain.value = 0.03;
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + time);
+}
+
+/* click sound (controlled) */
+let lock = false;
+
+document.addEventListener("click",()=>{
+    if(!lock){
+        beep(600,0.05);
+        lock = true;
+        setTimeout(()=>lock=false,200);
+    }
+});
+
+/* startup sound */
+window.onload = ()=>{
+    setTimeout(()=>beep(200,0.1),100);
+    setTimeout(()=>beep(400,0.1),300);
+    setTimeout(()=>beep(600,0.1),500);
+};
+
+</script>
+
+</body>
+</html>
