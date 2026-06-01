@@ -1,244 +1,214 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SA CYBER NET</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-body{
-    margin:0;
-    background:#050607;
-    color:#00ff9d;
-    font-family:monospace;
-}
-
-header{
-    text-align:center;
-    padding:20px;
-    font-size:26px;
-    color:#ff7a00;
-    text-shadow:0 0 10px #ff7a00;
-}
-
-.grid{
-    display:grid;
-    gap:20px;
-    max-width:900px;
-    margin:auto;
-    padding:20px;
-}
-
-.card{
-    border:1px solid #00ff9d;
-    border-radius:12px;
-    padding:15px;
-    background:rgba(0,255,157,0.05);
-    box-shadow:0 0 15px rgba(0,255,157,0.2);
-}
-
-.bar{
-    height:10px;
-    width:0%;
-    background:#00ff9d;
-    box-shadow:0 0 10px #00ff9d;
-    transition:width 0.4s;
-}
-
-.neon{
-    text-shadow:0 0 5px #00ff9d, 0 0 10px #00ff9d;
-}
-
-canvas{
-    background:#0a0c0f;
-    border-radius:10px;
-    padding:10px;
-}
-
-img{
-    width:100%;
-    border-radius:10px;
-    margin-top:10px;
-}
-</style>
-</head>
-
-<body>
-
-<header>🌐 SA CYBER NET CONTROL ⚡</header>
-
-<div class="grid">
-
-<!-- LIVE MESSAGE -->
-<div class="card">
-    <div class="neon">📡 LIVE MESSAGE</div>
-    <p id="msg">Loading...</p>
-    <img id="mainImg" style="display:none;">
-</div>
-
-<!-- DATA FLOW -->
-<div class="card">
-    <div class="neon">📊 DATA FLOW</div>
-    <div class="bar" id="bar"></div>
-</div>
-
-<!-- NEWS FEED -->
-<div class="card">
-    <div class="neon">📰 NEWS FEED</div>
-    <div id="feed"></div>
-</div>
-
-<!-- CHART -->
-<div class="card">
-    <div class="neon">📈 NETWORK ACTIVITY</div>
-    <canvas id="chart"></canvas>
-</div>
-
-</div>
-
-<script>
-
-/* =========================
-   📡 LOAD DATA
-========================= */
-function loadData(){
-
-fetch("data.json")
-.then(res => res.json())
-.then(data => {
-
-    // message
-    document.getElementById("msg").innerText = data.message;
-
-    // main image
-    if(data.image){
-        let img = document.getElementById("mainImg");
-        img.src = data.image;
-        img.style.display = "block";
-    }
-
-    // flow bar
-    document.getElementById("bar").style.width = data.flow + "%";
-
-    // news feed
-    let feed = document.getElementById("feed");
-    feed.innerHTML = "";
-
-    data.newsList.forEach(n => {
-
-        let div = document.createElement("div");
-        div.className = "card";
-
-        div.innerHTML = `
-            <p>📰 ${n.text}</p>
-            <img src="${n.image}">
-        `;
-
-        feed.appendChild(div);
-    });
-
-    // save offline
-    localStorage.setItem("sa_data", JSON.stringify(data));
-
-});
-
-}
-
-/* offline fallback */
-let cached = localStorage.getItem("sa_data");
-if(cached){
-    let data = JSON.parse(cached);
-    document.getElementById("msg").innerText = data.message;
-}
-
-/* auto refresh */
-setInterval(loadData, 5000);
-loadData();
-
-/* =========================
-   📊 LIVE BAR
-========================= */
-setInterval(()=>{
-    document.getElementById("bar").style.width =
-    Math.random()*100 + "%";
-},800);
-
-/* =========================
-   📈 CHART
-========================= */
-const ctx = document.getElementById("chart");
-
-const chart = new Chart(ctx, {
-    type:"line",
-    data:{
-        labels:Array(10).fill(""),
-        datasets:[{
-            data:Array(10).fill(50),
-            borderColor:"#00ff9d",
-            tension:0.4
-        }]
-    },
-    options:{
-        animation:false,
-        plugins:{legend:{display:false}},
-        scales:{
-            x:{display:false},
-            y:{ticks:{color:"#00ff9d"}}
-        }
-    }
-});
-
-setInterval(()=>{
-    chart.data.datasets[0].data.shift();
-    chart.data.datasets[0].data.push(Math.random()*100);
-    chart.update();
-},700);
-
-/* =========================
-   🔔 NOTIFICATION
-========================= */
-function notify(msg){
-    if(Notification.permission === "granted"){
-        new Notification("SA CYBER NET",{
-            body:msg
-        });
-    }
-}
-
-if(Notification.permission !== "granted"){
-    Notification.requestPermission();
-}
-
-/* =========================
-   🎧 SOUND
-========================= */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function beep(f,t){
-    let o = audioCtx.createOscillator();
-    let g = audioCtx.createGain();
-
-    o.connect(g);
-    g.connect(audioCtx.destination);
-
-    o.frequency.value=f;
-    g.gain.value=0.03;
-
-    o.start();
-    o.stop(audioCtx.currentTime+t);
-}
-
-window.onload=()=>{
-    setTimeout(()=>beep(200,0.1),100);
-    setTimeout(()=>beep(400,0.1),300);
-    setTimeout(()=>beep(600,0.1),500);
-
-    notify("System Active");
-};
-
-</script>
-
-</body>
-</html>
+<!DOCTYPE html>  <html lang="fa">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>SA CYBER NET</title>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>  
+body{  
+    margin:0;  
+    background:#050607;  
+    color:#00ff9d;  
+    font-family:monospace;  
+}  
+  
+header{  
+    text-align:center;  
+    padding:20px;  
+    font-size:26px;  
+    color:#ff7a00;  
+    text-shadow:0 0 10px #ff7a00;  
+}  
+  
+.grid{  
+    display:grid;  
+    gap:20px;  
+    max-width:900px;  
+    margin:auto;  
+    padding:20px;  
+}  
+  
+.card{  
+    border:1px solid #00ff9d;  
+    border-radius:12px;  
+    padding:15px;  
+    background:rgba(0,255,157,0.05);  
+    box-shadow:0 0 15px rgba(0,255,157,0.2);  
+}  
+  
+.bar{  
+    height:10px;  
+    width:0%;  
+    background:#00ff9d;  
+    box-shadow:0 0 10px #00ff9d;  
+    transition:width 0.4s;  
+}  
+  
+.neon{  
+    text-shadow:0 0 5px #00ff9d, 0 0 10px #00ff9d;  
+}  
+  
+canvas{  
+    background:#0a0c0f;  
+    border-radius:10px;  
+    padding:10px;  
+}  
+  
+img{  
+    width:100%;  
+    border-radius:10px;  
+    margin-top:10px;  
+}  
+</style>  </head>  <body>  <header>🌐 SA CYBER NET CONTROL ⚡</header>  <div class="grid">  <!-- LIVE MESSAGE -->  <div class="card">  
+    <div class="neon">📡 LIVE MESSAGE</div>  
+    <p id="msg">Loading...</p>  
+    <img id="mainImg" style="display:none;">  
+</div>  <!-- DATA FLOW -->  <div class="card">  
+    <div class="neon">📊 DATA FLOW</div>  
+    <div class="bar" id="bar"></div>  
+</div>  <!-- NEWS FEED -->  <div class="card">  
+    <div class="neon">📰 NEWS FEED</div>  
+    <div id="feed"></div>  
+</div>  <!-- CHART -->  <div class="card">  
+    <div class="neon">📈 NETWORK ACTIVITY</div>  
+    <canvas id="chart"></canvas>  
+</div>  </div>  <script>  
+  
+/* =========================  
+   📡 LOAD DATA  
+========================= */  
+function loadData(){  
+  
+fetch("data.json")  
+.then(res => res.json())  
+.then(data => {  
+  
+    // message  
+    document.getElementById("msg").innerText = data.message;  
+  
+    // main image  
+    if(data.image){  
+        let img = document.getElementById("mainImg");  
+        img.src = data.image;  
+        img.style.display = "block";  
+    }  
+  
+    // flow bar  
+    document.getElementById("bar").style.width = data.flow + "%";  
+  
+    // news feed  
+    let feed = document.getElementById("feed");  
+    feed.innerHTML = "";  
+  
+    data.newsList.forEach(n => {  
+  
+        let div = document.createElement("div");  
+        div.className = "card";  
+  
+        div.innerHTML = `  
+            <p>📰 ${n.text}</p>  
+            <img src="${n.image}">  
+        `;  
+  
+        feed.appendChild(div);  
+    });  
+  
+    // save offline  
+    localStorage.setItem("sa_data", JSON.stringify(data));  
+  
+});  
+  
+}  
+  
+/* offline fallback */  
+let cached = localStorage.getItem("sa_data");  
+if(cached){  
+    let data = JSON.parse(cached);  
+    document.getElementById("msg").innerText = data.message;  
+}  
+  
+/* auto refresh */  
+setInterval(loadData, 5000);  
+loadData();  
+  
+/* =========================  
+   📊 LIVE BAR  
+========================= */  
+setInterval(()=>{  
+    document.getElementById("bar").style.width =  
+    Math.random()*100 + "%";  
+},800);  
+  
+/* =========================  
+   📈 CHART  
+========================= */  
+const ctx = document.getElementById("chart");  
+  
+const chart = new Chart(ctx, {  
+    type:"line",  
+    data:{  
+        labels:Array(10).fill(""),  
+        datasets:[{  
+            data:Array(10).fill(50),  
+            borderColor:"#00ff9d",  
+            tension:0.4  
+        }]  
+    },  
+    options:{  
+        animation:false,  
+        plugins:{legend:{display:false}},  
+        scales:{  
+            x:{display:false},  
+            y:{ticks:{color:"#00ff9d"}}  
+        }  
+    }  
+});  
+  
+setInterval(()=>{  
+    chart.data.datasets[0].data.shift();  
+    chart.data.datasets[0].data.push(Math.random()*100);  
+    chart.update();  
+},700);  
+  
+/* =========================  
+   🔔 NOTIFICATION  
+========================= */  
+function notify(msg){  
+    if(Notification.permission === "granted"){  
+        new Notification("SA CYBER NET",{  
+            body:msg  
+        });  
+    }  
+}  
+  
+if(Notification.permission !== "granted"){  
+    Notification.requestPermission();  
+}  
+  
+/* =========================  
+   🎧 SOUND  
+========================= */  
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();  
+  
+function beep(f,t){  
+    let o = audioCtx.createOscillator();  
+    let g = audioCtx.createGain();  
+  
+    o.connect(g);  
+    g.connect(audioCtx.destination);  
+  
+    o.frequency.value=f;  
+    g.gain.value=0.03;  
+  
+    o.start();  
+    o.stop(audioCtx.currentTime+t);  
+}  
+  
+window.onload=()=>{  
+    setTimeout(()=>beep(200,0.1),100);  
+    setTimeout(()=>beep(400,0.1),300);  
+    setTimeout(()=>beep(600,0.1),500);  
+  
+    notify("System Active");  
+};  
+  
+</script>  </body>  
+</html>  
