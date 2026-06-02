@@ -1,7 +1,57 @@
 {
-  "message": "🟢 سامانه فعال است | پروکسی‌ها به‌روز شدند",
+  "message": "🟢 کانفیگ ها و پروکسی های جدید اضافه شدند",
 
-  "configs": [],
+  "configs": [
+
+    {
+      "link": "vless://96eec36e-2c44-5b09-898e-6f0f0526e57f@151.101.130.133:80?mode=auto&path=%2Flogin&security=none&encryption=none&extra=%7B%22mode%22%3A%22auto%22%2C%22scMaxEachPostBytes%22%3A%221000000%22%2C%22xPaddingBytes%22%3A%22100-1000%22%7D&host=shangulin.global.ssl.fastly.net&type=xhttp#Fastly-1",
+      "type": "VLESS",
+      "remark": "Fastly XHTTP"
+    },
+
+    {
+      "link": "vless://74120ed7-7f61-4017-8882-bd3dbb393bd7@94.156.170.46:8443?security=reality&encryption=none&pbk=SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc&headerType=none&type=tcp&flow=xtls-rprx-vision&sni=discordapp.com#Reality-Discord",
+      "type": "REALITY",
+      "remark": "Vision TCP"
+    },
+
+    {
+      "link": "vless://96eec36e-2c44-5b09-898e-6f0f0526e57f@23.235.42.205:80?mode=auto&path=%2Flogin&security=none&encryption=none&extra=%7B%22mode%22%3A%22auto%22%2C%22scMaxEachPostBytes%22%3A%221000000%22%2C%22xPaddingBytes%22%3A%22100-1000%22%7D&host=shangulin.global.ssl.fastly.net&type=xhttp#Fastly-2",
+      "type": "VLESS",
+      "remark": "CDN Fastly"
+    },
+
+    {
+      "link": "vless://96eec36e-2c44-5b09-898e-6f0f0526e57f@151.101.1.57:80?mode=auto&path=%2Flogin&security=none&encryption=none&extra=%7B%22mode%22%3A%22auto%22%2C%22scMaxEachPostBytes%22%3A%221000000%22%2C%22xPaddingBytes%22%3A%22100-1000%22%7D&host=shangulin.global.ssl.fastly.net&type=xhttp#Fastly-3",
+      "type": "VLESS",
+      "remark": "XHTTP"
+    },
+
+    {
+      "link": "vless://228639b0-48de-4162-a818-d5651ee297b3@27.50.48.49:443?path=%2Fin-do&security=tls&encryption=none&insecure=0&host=investors.spotify.com.cyylr.eu.cc&fp=chrome&type=ws&allowInsecure=0&sni=investors.spotify.com.cyylr.eu.cc#Spotify-WS",
+      "type": "WS TLS",
+      "remark": "Spotify Host"
+    },
+
+    {
+      "link": "vless://c83014e0-ad3e-4ebd-9e8f-8f7a1f6088d6@178.62.87.183:27774?security=none&encryption=none&headerType=none&type=tcp#TCP-Server",
+      "type": "TCP",
+      "remark": "Raw TCP"
+    },
+
+    {
+      "link": "vless://3d08f4ea-0207-4098-a17d-e6de41463c49@45.130.125.193:8443?mode=auto&path=%2F%3Fed%3D80&security=tls&alpn=h2&encryption=none&extra=%7B%22scMaxEachPostBytes%22%3A1000000,%22scMaxConcurrentPosts%22%3A100,%22scMinPostsIntervalMs%22%3A30,%22xPaddingBytes%22:%22100-1000%22,%22noGRPCHeader%22:false%7D&insecure=0&fp=chrome&type=xhttp&allowInsecure=0&sni=ssj.new-persian-song.ir#PersianSong-1",
+      "type": "XHTTP TLS",
+      "remark": "H2 Secure"
+    },
+
+    {
+      "link": "vless://3d08f4ea-0207-4098-a17d-e6de41463c49@45.130.125.162:8443?mode=auto&path=%2F%3Fed%3D80&security=tls&alpn=h2&encryption=none&extra=%7B%22scMaxEachPostBytes%22%3A1000000,%22scMaxConcurrentPosts%22%3A100,%22scMinPostsIntervalMs%22%3A30,%22xPaddingBytes%22:%22100-1000%22,%22noGRPCHeader%22:false%7D&insecure=0&host=vi.mojaz-persian-music.ir&fp=chrome&type=xhttp&allowInsecure=0&sni=vi.mojaz-persian-music.ir#PersianSong-2",
+      "type": "XHTTP TLS",
+      "remark": "Music CDN"
+    }
+
+  ],
 
   "proxies": [
 
@@ -9,37 +59,4 @@
       "link": "https://t.me/proxy?server=proxy.speedbreaker.info&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
       "type": "MTProto",
       "remark": "SpeedBreaker"
-    },
-
-    {
-      "link": "https://t.me/proxy?server=norm.quickdl.info&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
-      "type": "MTProto",
-      "remark": "QuickDL 1"
-    },
-
-    {
-      "link": "https://t.me/proxy?server=form.quickdl.info&port=22&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
-      "type": "MTProto",
-      "remark": "QuickDL 2"
-    },
-
-    {
-      "link": "https://t.me/proxy?server=iran.protocolsix.info.&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
-      "type": "MTProto",
-      "remark": "ProtocolSix"
-    },
-
-    {
-      "link": "https://t.me/proxy?server=87.248.129.12&port=15&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
-      "type": "MTProto",
-      "remark": "Server 12"
-    },
-
-    {
-      "link": "https://t.me/proxy?server=87.248.129.50&port=15&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
-      "type": "MTProto",
-      "remark": "Server 50"
     }
-
-  ]
-}
