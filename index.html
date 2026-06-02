@@ -206,6 +206,73 @@ footer{
     font-size:13px;
 }
 
+/* popup */
+
+.popup{
+
+    position:fixed;
+    top:25px;
+    right:25px;
+
+    background:rgba(10,10,10,.92);
+
+    border:1px solid var(--accent);
+
+    color:white;
+
+    padding:16px 18px;
+
+    border-radius:14px;
+
+    z-index:9999;
+
+    min-width:260px;
+
+    box-shadow:
+    0 0 25px rgba(255,122,0,.35);
+
+    animation:showPopup .35s ease;
+}
+
+.popup-title{
+
+    color:var(--accent);
+
+    font-size:16px;
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+    text-shadow:0 0 10px var(--accent);
+}
+
+.popup-text{
+
+    opacity:.9;
+    line-height:1.8;
+    font-size:14px;
+}
+
+@keyframes showPopup{
+
+    from{
+        opacity:0;
+        transform:translateY(-15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.comments-box{
+
+    max-width:980px;
+    margin:25px auto;
+    padding:15px;
+}
+
 </style>
 </head>
 
@@ -251,18 +318,18 @@ footer{
 ⬇️ دانلود ویتوری
 </a>
 
-<p style="opacity:.7">
-نسخه اختصاصی اندروید
-</p>
 <button class="dl-btn"
 onclick="comingSoon()">
 
 ⬇️ دانلود Taj Tunnel Pro
 
 </button>
-</div>
 
-<!-- CONFIGS -->
+<p style="opacity:.7">
+نسخه اختصاصی اندروید
+</p>
+
+</div>
 
 <div class="card">
 
@@ -273,8 +340,6 @@ onclick="comingSoon()">
 <div id="configs"></div>
 
 </div>
-
-<!-- PROXY -->
 
 <div class="card">
 
@@ -293,6 +358,22 @@ class="tg-btn">
 📢 ورود به کانال تلگرام
 
 </a>
+
+</div>
+
+<!-- COMMENTS -->
+
+<div class="comments-box">
+
+<div class="card">
+
+<div class="neon">
+💬 نظرات کاربران
+</div>
+
+<div class="giscus"></div>
+
+</div>
 
 </div>
 
@@ -328,16 +409,54 @@ function copyConfig(text){
     beep(700,.08);
     setTimeout(()=>beep(1100,.12),90);
 
-    alert("✅ کپی شد");
+    showPopup(
+        "✅ کپی شد",
+        "کانفیگ داخل کلیپ‌بورد ذخیره شد"
+    );
 }
+
+function showPopup(title,text){
+
+    const old =
+    document.querySelector(".popup");
+
+    if(old) old.remove();
+
+    const popup =
+    document.createElement("div");
+
+    popup.className = "popup";
+
+    popup.innerHTML = `
+
+    <div class="popup-title">
+    ${title}
+    </div>
+
+    <div class="popup-text">
+    ${text}
+    </div>
+
+    `;
+
+    document.body.appendChild(popup);
+
+    setTimeout(()=>{
+        popup.remove();
+    },3000);
+}
+
 function comingSoon(){
 
     beep(400,.08);
     setTimeout(()=>beep(250,.12),120);
 
-    alert("🚧 این برنامه هنوز بارگذاری نشده\n⏳ به‌زودی اضافه می‌شود");
-
+    showPopup(
+        "🚧 بزودی",
+        "Taj Tunnel Pro هنوز بارگذاری نشده و بزودی اضافه می‌شود"
+    );
 }
+
 async function pingTest(url,el){
 
     el.innerHTML = "⏳ تست...";
@@ -508,6 +627,7 @@ setTimeout(()=>beep(900,.1),420);
 };
 
 </script>
+
 <script src="https://giscus.app/client.js"
         data-repo="Sadra915/mosque-site"
         data-repo-id="R_kgDOStCu-g"
@@ -524,5 +644,6 @@ setTimeout(()=>beep(900,.1),420);
         crossorigin="anonymous"
         async>
 </script>
+
 </body>
 </html>
