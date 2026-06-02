@@ -40,6 +40,97 @@ body::before{
     z-index:-1;
 }
 
+/* INTRO */
+
+#intro{
+
+    position:fixed;
+    inset:0;
+
+    background:#050607;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+
+    z-index:99999;
+
+    transition:1s;
+}
+
+#intro.hide{
+
+    opacity:0;
+    visibility:hidden;
+}
+
+.intro-text{
+
+    font-size:28px;
+    color:var(--neon);
+
+    text-shadow:
+    0 0 10px var(--neon),
+    0 0 25px var(--neon);
+
+    min-height:50px;
+
+    letter-spacing:1px;
+
+    margin-bottom:18px;
+}
+
+.cursor{
+
+    display:inline-block;
+
+    width:10px;
+    height:28px;
+
+    background:var(--neon);
+
+    animation:blink .7s infinite;
+}
+
+.loading-bar{
+
+    width:260px;
+    height:8px;
+
+    border-radius:20px;
+
+    background:#111;
+
+    overflow:hidden;
+
+    border:1px solid rgba(0,255,157,.25);
+}
+
+.loading-fill{
+
+    height:100%;
+    width:0%;
+
+    background:
+    linear-gradient(
+    90deg,
+    var(--accent),
+    var(--neon));
+
+    box-shadow:
+    0 0 15px var(--neon);
+
+    transition:width .3s;
+}
+
+@keyframes blink{
+
+    50%{
+        opacity:0;
+    }
+}
+
 header{
     text-align:center;
     padding:28px 15px;
@@ -278,6 +369,23 @@ footer{
 
 <body>
 
+<!-- INTRO -->
+
+<div id="intro">
+
+<div class="intro-text">
+
+<span id="typing"></span>
+<span class="cursor"></span>
+
+</div>
+
+<div class="loading-bar">
+<div class="loading-fill" id="loadingFill"></div>
+</div>
+
+</div>
+
 <header>
 ⚡ مسجد محله ⚡
 </header>
@@ -400,6 +508,74 @@ function beep(freq,time=.08){
 
     o.start();
     o.stop(audioCtx.currentTime + time);
+}
+
+/* INTRO ANIMATION */
+
+const introTexts = [
+
+"به مسجد محله خوش آمدید",
+"در حال اتصال . . .",
+"اتصال موفق"
+
+];
+
+let introIndex = 0;
+
+let charIndex = 0;
+
+const typing =
+document.getElementById("typing");
+
+const fill =
+document.getElementById("loadingFill");
+
+function typeIntro(){
+
+    if(introIndex >= introTexts.length){
+
+        setTimeout(()=>{
+
+            document
+            .getElementById("intro")
+            .classList.add("hide");
+
+        },700);
+
+        return;
+    }
+
+    const current =
+    introTexts[introIndex];
+
+    if(charIndex < current.length){
+
+        typing.innerHTML +=
+        current.charAt(charIndex);
+
+        beep(700,.03);
+
+        charIndex++;
+
+        setTimeout(typeIntro,70);
+
+    }else{
+
+        fill.style.width =
+        ((introIndex+1)/3)*100 + "%";
+
+        setTimeout(()=>{
+
+            typing.innerHTML = "";
+
+            charIndex = 0;
+
+            introIndex++;
+
+            typeIntro();
+
+        },1000);
+    }
 }
 
 function copyConfig(text){
@@ -615,6 +791,8 @@ proxies.appendChild(box);
 }
 
 window.onload = ()=>{
+
+typeIntro();
 
 loadData();
 
