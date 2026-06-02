@@ -184,6 +184,19 @@ button:hover,
     font-size:12px;
 }
 
+.proxy-card{
+    border:1px solid rgba(255,122,0,.35);
+}
+
+.proxy-btn{
+    background:var(--accent);
+    color:#fff;
+}
+
+.proxy-btn:hover{
+    background:#ff9d42;
+}
+
 footer{
 
     text-align:center;
@@ -244,6 +257,8 @@ footer{
 
 </div>
 
+<!-- CONFIGS -->
+
 <div class="card">
 
 <div class="neon">
@@ -251,6 +266,18 @@ footer{
 </div>
 
 <div id="configs"></div>
+
+</div>
+
+<!-- PROXY -->
+
+<div class="card">
+
+<div class="neon">
+🛰 پروکسی تلگرام
+</div>
+
+<div id="proxies"></div>
 
 </div>
 
@@ -296,7 +323,7 @@ function copyConfig(text){
     beep(700,.08);
     setTimeout(()=>beep(1100,.12),90);
 
-    alert("✅ کانفیگ کپی شد");
+    alert("✅ کپی شد");
 }
 
 async function pingTest(url,el){
@@ -339,9 +366,11 @@ async function loadData(){
 let data = {
 
 message:
-"قابلیت ها بزودی بیشتر میشه",
+"🟢 سامانه فعال است | کانفیگ‌ها به‌روز شدند",
 
-configs:[]
+configs:[],
+
+proxies:[]
 };
 
 try{
@@ -362,6 +391,8 @@ data = await res.json();
 document
 .getElementById("msg")
 .innerHTML = data.message;
+
+/* CONFIGS */
 
 const configs =
 document.getElementById("configs");
@@ -405,6 +436,48 @@ ${cfg.remark ? " • "+cfg.remark : ""}
 `;
 
 configs.appendChild(box);
+
+});
+
+/* PROXIES */
+
+const proxies =
+document.getElementById("proxies");
+
+proxies.innerHTML = "";
+
+(data.proxies || [])
+.forEach(proxy=>{
+
+const box =
+document.createElement("div");
+
+box.className =
+"config-card proxy-card";
+
+box.innerHTML = `
+
+<div class="config-box">
+${proxy.link}
+</div>
+
+<button class="proxy-btn"
+onclick="window.open('${proxy.link}','_blank')">
+🚀 اتصال
+</button>
+
+<button onclick="copyConfig('${proxy.link}')">
+📋 کپی
+</button>
+
+<div class="badge">
+${proxy.type || "PROXY"}
+${proxy.remark ? " • "+proxy.remark : ""}
+</div>
+
+`;
+
+proxies.appendChild(box);
 
 });
 
