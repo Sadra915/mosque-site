@@ -1,21 +1,45 @@
 {
-  "message": "سایت مسجد آنلاین شد",
+  "message": "🟢 سامانه فعال است | پروکسی‌ها به‌روز شدند",
 
-  "configs": [
-    {
-      "link": "vless://example-config",
-      "type": "VLESS",
-      "remark": "IRAN FAST",
-      "testUrl": "https://google.com"
-    }
-  ],
+  "configs": [],
 
   "proxies": [
+
+    {
+      "link": "https://t.me/proxy?server=proxy.speedbreaker.info&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
+      "type": "MTProto",
+      "remark": "SpeedBreaker"
+    },
+
+    {
+      "link": "https://t.me/proxy?server=norm.quickdl.info&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
+      "type": "MTProto",
+      "remark": "QuickDL 1"
+    },
+
+    {
+      "link": "https://t.me/proxy?server=form.quickdl.info&port=22&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
+      "type": "MTProto",
+      "remark": "QuickDL 2"
+    },
+
     {
       "link": "https://t.me/proxy?server=iran.protocolsix.info.&port=25565&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
       "type": "MTProto",
-      "remark": "Telegram Proxy"
+      "remark": "ProtocolSix"
+    },
+
+    {
+      "link": "https://t.me/proxy?server=87.248.129.12&port=15&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
+      "type": "MTProto",
+      "remark": "Server 12"
+    },
+
+    {
+      "link": "https://t.me/proxy?server=87.248.129.50&port=15&secret=ee1603010200010001fc030386e24c3add626973636f7474692e79656b74616e65742e636f6d",
+      "type": "MTProto",
+      "remark": "Server 50"
     }
+
   ]
 }
-
