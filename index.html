@@ -325,7 +325,14 @@ function copyConfig(text){
 
     alert("✅ کپی شد");
 }
+function comingSoon(){
 
+    beep(400,.08);
+    setTimeout(()=>beep(250,.12),120);
+
+    alert("🚧 این برنامه هنوز بارگذاری نشده\n⏳ به‌زودی اضافه می‌شود");
+
+}
 async function pingTest(url,el){
 
     el.innerHTML = "⏳ تست...";
