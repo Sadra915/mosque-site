@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,26 +17,8 @@
 
 *{
     box-sizing:border-box;
-
-
-/* INTRO */
-
-#intro{
-
-    position:fixed;
-    inset:0;
-
-    background:#050607;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    z-index:99999;
-
-    transition:1s;
 }
+
 body{
     margin:0;
     color:var(--neon);
@@ -44,7 +27,7 @@ body{
     background:#000;
 }
 
-/* BACKGROUND IMAGE */
+/* BACKGROUND */
 
 body::before{
     content:"";
@@ -53,8 +36,8 @@ body::before{
 
     background:
     linear-gradient(
-    rgba(0,0,0,.70),
-    rgba(0,0,0,.70)),
+    rgba(0,0,0,.72),
+    rgba(0,0,0,.72)),
     url("bg.jpg");
 
     background-size:cover;
@@ -82,8 +65,6 @@ body::after{
     z-index:-1;
 }
 
-/* حرکت آروم بک‌گراند */
-
 @keyframes bgMove{
 
     0%{
@@ -94,6 +75,26 @@ body::after{
         transform:scale(1.05) translate(-10px,-10px);
     }
 }
+
+/* INTRO */
+
+#intro{
+
+    position:fixed;
+    inset:0;
+
+    background:#050607;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+
+    z-index:99999;
+
+    transition:1s;
+}
+
 #intro.hide{
 
     opacity:0;
@@ -167,13 +168,20 @@ body::after{
 }
 
 header{
+
     text-align:center;
     padding:28px 15px;
+
     font-size:34px;
     font-weight:bold;
+
     letter-spacing:2px;
 
-    background:linear-gradient(90deg,var(--accent),var(--neon));
+    background:linear-gradient(
+    90deg,
+    var(--accent),
+    var(--neon));
+
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
@@ -181,17 +189,24 @@ header{
 }
 
 .grid{
+
     display:grid;
     gap:18px;
+
     max-width:980px;
     margin:auto;
+
     padding:15px;
 }
 
 .card{
+
     background:rgba(0,255,157,.04);
+
     border:1px solid rgba(0,255,157,.3);
+
     border-radius:18px;
+
     padding:20px;
 
     box-shadow:
@@ -204,19 +219,26 @@ header{
 }
 
 .card:hover{
+
     transform:translateY(-3px);
+
     box-shadow:
     0 0 22px rgba(0,255,157,.18);
 }
 
 .neon{
+
     font-size:19px;
+
     margin-bottom:14px;
+
     text-shadow:0 0 10px var(--neon);
 }
 
 .status{
+
     font-size:15px;
+
     line-height:1.9;
 }
 
@@ -224,17 +246,21 @@ button,
 .dl-btn{
 
     background:var(--neon);
+
     color:#000;
 
     border:none;
+
     border-radius:10px;
 
     padding:12px 18px;
 
     font-weight:bold;
+
     cursor:pointer;
 
     text-decoration:none;
+
     display:inline-block;
 
     margin:6px 4px;
@@ -246,6 +272,7 @@ button:hover,
 .dl-btn:hover{
 
     background:var(--accent);
+
     color:white;
 
     transform:scale(1.03);
@@ -254,15 +281,19 @@ button:hover,
 .tg-btn{
 
     background:#229ED9;
+
     color:white;
 
     text-align:center;
+
     text-decoration:none;
 
     padding:16px;
+
     border-radius:12px;
 
     font-size:17px;
+
     font-weight:bold;
 
     box-shadow:0 0 15px rgba(34,158,217,.4);
@@ -271,9 +302,11 @@ button:hover,
 .config-card{
 
     background:#0b0d10;
+
     border:1px dashed rgba(0,255,157,.35);
 
     padding:15px;
+
     border-radius:14px;
 
     margin-bottom:18px;
@@ -284,11 +317,13 @@ button:hover,
     background:#050607;
 
     padding:14px;
+
     border-radius:10px;
 
     word-break:break-all;
 
     font-size:13px;
+
     line-height:1.8;
 
     border:1px solid rgba(0,255,157,.2);
@@ -301,6 +336,7 @@ button:hover,
     display:inline-block;
 
     padding:5px 10px;
+
     border-radius:20px;
 
     background:rgba(0,255,157,.15);
@@ -315,28 +351,34 @@ button:hover,
 }
 
 .proxy-btn{
+
     background:var(--accent);
+
     color:#fff;
 }
 
 .proxy-btn:hover{
+
     background:#ff9d42;
 }
 
 footer{
 
     text-align:center;
+
     padding:25px;
 
     opacity:.6;
+
     font-size:13px;
 }
 
-/* popup */
+/* POPUP */
 
 .popup{
 
     position:fixed;
+
     top:25px;
     right:25px;
 
@@ -365,6 +407,7 @@ footer{
     color:var(--accent);
 
     font-size:16px;
+
     font-weight:bold;
 
     margin-bottom:8px;
@@ -375,7 +418,9 @@ footer{
 .popup-text{
 
     opacity:.9;
+
     line-height:1.8;
+
     font-size:14px;
 }
 
@@ -395,7 +440,9 @@ footer{
 .comments-box{
 
     max-width:980px;
+
     margin:25px auto;
+
     padding:15px;
 }
 
@@ -461,8 +508,6 @@ footer{
 ⬇️ دانلود ویتوری
 </a>
 
-</button>
-=======
 <a class="dl-btn"
 href="TAJ-TUNNEL.apk"
 download>
@@ -470,7 +515,6 @@ download>
 ⬇️ دانلود Taj Tunnel Pro
 
 </a>
->>>>>>> Stashed changes
 
 <p style="opacity:.7">
 نسخه اختصاصی اندروید
@@ -560,7 +604,6 @@ const introTexts = [
 ];
 
 let introIndex = 0;
-
 let charIndex = 0;
 
 const typing =
@@ -622,6 +665,7 @@ function copyConfig(text){
     navigator.clipboard.writeText(text);
 
     beep(700,.08);
+
     setTimeout(()=>beep(1100,.12),90);
 
     showPopup(
@@ -661,17 +705,6 @@ function showPopup(title,text){
     },3000);
 }
 
-function comingSoon(){
-
-    beep(400,.08);
-    setTimeout(()=>beep(250,.12),120);
-
-    showPopup(
-        "🚧 بزودی",
-        "Taj Tunnel Pro هنوز بارگذاری نشده و بزودی اضافه می‌شود"
-    );
-}
-
 async function pingTest(url,el){
 
     el.innerHTML = "⏳ تست...";
@@ -703,7 +736,6 @@ async function pingTest(url,el){
     }catch{
 
         el.innerHTML = "❌ خطا";
-
     }
 }
 
@@ -729,7 +761,6 @@ await fetch(
 if(res.ok){
 
 data = await res.json();
-
 }
 
 }catch(e){}
