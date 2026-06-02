@@ -1,214 +1,428 @@
-<!DOCTYPE html>  <html lang="fa">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>SA CYBER NET</title>  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>  
-body{  
-    margin:0;  
-    background:#050607;  
-    color:#00ff9d;  
-    font-family:monospace;  
-}  
-  
-header{  
-    text-align:center;  
-    padding:20px;  
-    font-size:26px;  
-    color:#ff7a00;  
-    text-shadow:0 0 10px #ff7a00;  
-}  
-  
-.grid{  
-    display:grid;  
-    gap:20px;  
-    max-width:900px;  
-    margin:auto;  
-    padding:20px;  
-}  
-  
-.card{  
-    border:1px solid #00ff9d;  
-    border-radius:12px;  
-    padding:15px;  
-    background:rgba(0,255,157,0.05);  
-    box-shadow:0 0 15px rgba(0,255,157,0.2);  
-}  
-  
-.bar{  
-    height:10px;  
-    width:0%;  
-    background:#00ff9d;  
-    box-shadow:0 0 10px #00ff9d;  
-    transition:width 0.4s;  
-}  
-  
-.neon{  
-    text-shadow:0 0 5px #00ff9d, 0 0 10px #00ff9d;  
-}  
-  
-canvas{  
-    background:#0a0c0f;  
-    border-radius:10px;  
-    padding:10px;  
-}  
-  
-img{  
-    width:100%;  
-    border-radius:10px;  
-    margin-top:10px;  
-}  
-</style>  </head>  <body>  <header>🌐 SA CYBER NET CONTROL ⚡</header>  <div class="grid">  <!-- LIVE MESSAGE -->  <div class="card">  
-    <div class="neon">📡 LIVE MESSAGE</div>  
-    <p id="msg">Loading...</p>  
-    <img id="mainImg" style="display:none;">  
-</div>  <!-- DATA FLOW -->  <div class="card">  
-    <div class="neon">📊 DATA FLOW</div>  
-    <div class="bar" id="bar"></div>  
-</div>  <!-- NEWS FEED -->  <div class="card">  
-    <div class="neon">📰 NEWS FEED</div>  
-    <div id="feed"></div>  
-</div>  <!-- CHART -->  <div class="card">  
-    <div class="neon">📈 NETWORK ACTIVITY</div>  
-    <canvas id="chart"></canvas>  
-</div>  </div>  <script>  
-  
-/* =========================  
-   📡 LOAD DATA  
-========================= */  
-function loadData(){  
-  
-fetch("data.json")  
-.then(res => res.json())  
-.then(data => {  
-  
-    // message  
-    document.getElementById("msg").innerText = data.message;  
-  
-    // main image  
-    if(data.image){  
-        let img = document.getElementById("mainImg");  
-        img.src = data.image;  
-        img.style.display = "block";  
-    }  
-  
-    // flow bar  
-    document.getElementById("bar").style.width = data.flow + "%";  
-  
-    // news feed  
-    let feed = document.getElementById("feed");  
-    feed.innerHTML = "";  
-  
-    data.newsList.forEach(n => {  
-  
-        let div = document.createElement("div");  
-        div.className = "card";  
-  
-        div.innerHTML = `  
-            <p>📰 ${n.text}</p>  
-            <img src="${n.image}">  
-        `;  
-  
-        feed.appendChild(div);  
-    });  
-  
-    // save offline  
-    localStorage.setItem("sa_data", JSON.stringify(data));  
-  
-});  
-  
-}  
-  
-/* offline fallback */  
-let cached = localStorage.getItem("sa_data");  
-if(cached){  
-    let data = JSON.parse(cached);  
-    document.getElementById("msg").innerText = data.message;  
-}  
-  
-/* auto refresh */  
-setInterval(loadData, 5000);  
-loadData();  
-  
-/* =========================  
-   📊 LIVE BAR  
-========================= */  
-setInterval(()=>{  
-    document.getElementById("bar").style.width =  
-    Math.random()*100 + "%";  
-},800);  
-  
-/* =========================  
-   📈 CHART  
-========================= */  
-const ctx = document.getElementById("chart");  
-  
-const chart = new Chart(ctx, {  
-    type:"line",  
-    data:{  
-        labels:Array(10).fill(""),  
-        datasets:[{  
-            data:Array(10).fill(50),  
-            borderColor:"#00ff9d",  
-            tension:0.4  
-        }]  
-    },  
-    options:{  
-        animation:false,  
-        plugins:{legend:{display:false}},  
-        scales:{  
-            x:{display:false},  
-            y:{ticks:{color:"#00ff9d"}}  
-        }  
-    }  
-});  
-  
-setInterval(()=>{  
-    chart.data.datasets[0].data.shift();  
-    chart.data.datasets[0].data.push(Math.random()*100);  
-    chart.update();  
-},700);  
-  
-/* =========================  
-   🔔 NOTIFICATION  
-========================= */  
-function notify(msg){  
-    if(Notification.permission === "granted"){  
-        new Notification("SA CYBER NET",{  
-            body:msg  
-        });  
-    }  
-}  
-  
-if(Notification.permission !== "granted"){  
-    Notification.requestPermission();  
-}  
-  
-/* =========================  
-   🎧 SOUND  
-========================= */  
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();  
-  
-function beep(f,t){  
-    let o = audioCtx.createOscillator();  
-    let g = audioCtx.createGain();  
-  
-    o.connect(g);  
-    g.connect(audioCtx.destination);  
-  
-    o.frequency.value=f;  
-    g.gain.value=0.03;  
-  
-    o.start();  
-    o.stop(audioCtx.currentTime+t);  
-}  
-  
-window.onload=()=>{  
-    setTimeout(()=>beep(200,0.1),100);  
-    setTimeout(()=>beep(400,0.1),300);  
-    setTimeout(()=>beep(600,0.1),500);  
-  
-    notify("System Active");  
-};  
-  
-</script>  </body>  
-</html>  
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SA CYBER NET</title>
+
+<style>
+
+:root{
+    --neon:#00ff9d;
+    --accent:#ff7a00;
+    --bg:#050607;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--neon);
+    font-family:monospace;
+    overflow-x:hidden;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+    radial-gradient(circle at top right,
+    rgba(0,255,157,.08),
+    transparent 30%),
+    radial-gradient(circle at bottom left,
+    rgba(255,122,0,.08),
+    transparent 30%);
+    z-index:-1;
+}
+
+header{
+    text-align:center;
+    padding:28px 15px;
+    font-size:34px;
+    font-weight:bold;
+    letter-spacing:2px;
+
+    background:linear-gradient(90deg,var(--accent),var(--neon));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    text-shadow:0 0 25px var(--neon);
+}
+
+.grid{
+    display:grid;
+    gap:18px;
+    max-width:980px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:rgba(0,255,157,.04);
+    border:1px solid rgba(0,255,157,.3);
+    border-radius:18px;
+    padding:20px;
+
+    box-shadow:
+    0 0 15px rgba(0,255,157,.08),
+    inset 0 0 10px rgba(0,255,157,.04);
+
+    backdrop-filter:blur(6px);
+
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+    box-shadow:
+    0 0 22px rgba(0,255,157,.18);
+}
+
+.neon{
+    font-size:19px;
+    margin-bottom:14px;
+    text-shadow:0 0 10px var(--neon);
+}
+
+.status{
+    font-size:15px;
+    line-height:1.9;
+}
+
+button,
+.dl-btn{
+
+    background:var(--neon);
+    color:#000;
+
+    border:none;
+    border-radius:10px;
+
+    padding:12px 18px;
+
+    font-weight:bold;
+    cursor:pointer;
+
+    text-decoration:none;
+    display:inline-block;
+
+    margin:6px 4px;
+
+    transition:.2s;
+}
+
+button:hover,
+.dl-btn:hover{
+
+    background:var(--accent);
+    color:white;
+
+    transform:scale(1.03);
+}
+
+.tg-btn{
+
+    background:#229ED9;
+    color:white;
+
+    text-align:center;
+    text-decoration:none;
+
+    padding:16px;
+    border-radius:12px;
+
+    font-size:17px;
+    font-weight:bold;
+
+    box-shadow:0 0 15px rgba(34,158,217,.4);
+}
+
+.config-card{
+
+    background:#0b0d10;
+    border:1px dashed rgba(0,255,157,.35);
+
+    padding:15px;
+    border-radius:14px;
+
+    margin-bottom:18px;
+}
+
+.config-box{
+
+    background:#050607;
+
+    padding:14px;
+    border-radius:10px;
+
+    word-break:break-all;
+
+    font-size:13px;
+    line-height:1.8;
+
+    border:1px solid rgba(0,255,157,.2);
+
+    margin-bottom:10px;
+}
+
+.badge{
+
+    display:inline-block;
+
+    padding:5px 10px;
+    border-radius:20px;
+
+    background:rgba(0,255,157,.15);
+
+    margin-top:10px;
+
+    font-size:12px;
+}
+
+footer{
+
+    text-align:center;
+    padding:25px;
+
+    opacity:.6;
+    font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+⚡ SA CYBER NET ⚡
+</header>
+
+<div class="grid">
+
+<div class="card">
+
+<div class="neon">
+📡 پیام لحظه‌ای
+</div>
+
+<p id="msg" class="status">
+در حال بارگذاری...
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="neon">
+📥 دانلود اپ‌ها
+</div>
+
+<a class="dl-btn" href="VPN-AMT.apk" download>
+⬇️ دانلود VPN AMT
+</a>
+
+<a class="dl-btn" href="SHIR-O-KHORSHID.apk" download>
+⬇️ دانلود سایفون شیر و خورشید
+</a>
+
+<a class="dl-btn" href="NPV.apk" download>
+⬇️ دانلود NPV
+</a>
+
+<a class="dl-btn" href="V2RAY.apk" download>
+⬇️ دانلود ویتوری
+</a>
+
+<p style="opacity:.7">
+نسخه اختصاصی اندروید
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="neon">
+🔥 کانفیگ‌های رایگان
+</div>
+
+<div id="configs"></div>
+
+</div>
+
+<a href="https://t.me/ddddvasel"
+target="_blank"
+class="tg-btn">
+
+📢 ورود به کانال تلگرام
+
+</a>
+
+</div>
+
+<footer>
+SA CYBER NET • ONLINE
+</footer>
+
+<script>
+
+const audioCtx =
+new (window.AudioContext ||
+window.webkitAudioContext)();
+
+function beep(freq,time=.08){
+
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+
+    o.connect(g);
+    g.connect(audioCtx.destination);
+
+    o.frequency.value = freq;
+    g.gain.value = .04;
+
+    o.start();
+    o.stop(audioCtx.currentTime + time);
+}
+
+function copyConfig(text){
+
+    navigator.clipboard.writeText(text);
+
+    beep(700,.08);
+    setTimeout(()=>beep(1100,.12),90);
+
+    alert("✅ کانفیگ کپی شد");
+}
+
+async function pingTest(url,el){
+
+    el.innerHTML = "⏳ تست...";
+
+    try{
+
+        const start = Date.now();
+
+        await fetch(url,{
+            mode:"no-cors",
+            cache:"no-cache"
+        });
+
+        const ping =
+        Date.now() - start;
+
+        let color =
+        ping < 250
+        ? "#00ff9d"
+        : ping < 500
+        ? "yellow"
+        : "red";
+
+        el.innerHTML =
+        `⚡ <span style="color:${color}">
+        ${ping}ms
+        </span>`;
+
+    }catch{
+
+        el.innerHTML = "❌ خطا";
+
+    }
+}
+
+async function loadData(){
+
+let data = {
+
+message:
+"🟢 سامانه فعال است | کانفیگ‌ها به‌روز شدند",
+
+configs:[]
+};
+
+try{
+
+const res =
+await fetch(
+"data.json?v="+Date.now()
+);
+
+if(res.ok){
+
+data = await res.json();
+
+}
+
+}catch(e){}
+
+document
+.getElementById("msg")
+.innerHTML = data.message;
+
+const configs =
+document.getElementById("configs");
+
+configs.innerHTML = "";
+
+(data.configs || [])
+.forEach(cfg=>{
+
+const box =
+document.createElement("div");
+
+box.className =
+"config-card";
+
+box.innerHTML = `
+
+<div class="config-box">
+${cfg.link}
+</div>
+
+<button onclick="copyConfig('${cfg.link}')">
+📋 کپی
+</button>
+
+<button onclick="
+pingTest(
+'${cfg.testUrl || "https://google.com"}',
+this.nextElementSibling
+)">
+⚡ تست پینگ
+</button>
+
+<span></span>
+
+<div class="badge">
+${cfg.type || "CONFIG"}
+${cfg.remark ? " • "+cfg.remark : ""}
+</div>
+
+`;
+
+configs.appendChild(box);
+
+});
+
+}
+
+window.onload = ()=>{
+
+loadData();
+
+setInterval(loadData,20000);
+
+setTimeout(()=>beep(300,.1),100);
+setTimeout(()=>beep(600,.1),260);
+setTimeout(()=>beep(900,.1),420);
+
+};
+
+</script>
+
+</body>
+</html>
