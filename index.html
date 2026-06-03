@@ -1,449 +1,142 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>مسجد محله</title>
+<title>مسجد محله | در حال ارتقاء</title>
 
 <style>
 
-:root{
-    --neon:#00ff9d;
-    --accent:#ff7a00;
-    --bg:#050607;
-}
-
 *{
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:monospace;
 }
 
 body{
-    margin:0;
-    color:var(--neon);
-    font-family:monospace;
-    overflow-x:hidden;
-    background:#000;
+height:100vh;
+background:#000;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+color:#00ff9d;
 }
 
 /* BACKGROUND */
-
-body::before{
-    content:"";
-    position:fixed;
-    inset:-20px;
-
-    background:
-    linear-gradient(
-    rgba(0,0,0,.72),
-    rgba(0,0,0,.72)),
-    url("bg.jpg");
-
-    background-size:cover;
-    background-position:center;
-
-    z-index:-2;
-
-    animation:bgMove 20s ease-in-out infinite alternate;
+canvas{
+position:fixed;
+inset:0;
+z-index:0;
 }
 
-body::after{
-    content:"";
-    position:fixed;
-    inset:0;
-
-    background:
-    radial-gradient(circle at top right,
-    rgba(0,255,157,.08),
-    transparent 30%),
-
-    radial-gradient(circle at bottom left,
-    rgba(255,122,0,.08),
-    transparent 30%);
-
-    z-index:-1;
+.overlay{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at center, rgba(0,255,157,0.06), transparent 45%),
+radial-gradient(circle at top, rgba(255,122,0,0.04), transparent 60%);
+z-index:1;
 }
 
-@keyframes bgMove{
+/* BOX */
+.box{
+position:relative;
+z-index:2;
+width:92%;
+max-width:700px;
 
-    0%{
-        transform:scale(1) translate(0,0);
-    }
+padding:30px;
+text-align:center;
 
-    100%{
-        transform:scale(1.05) translate(-10px,-10px);
-    }
+border:1px solid #00ff9d33;
+border-radius:18px;
+
+background:rgba(0,0,0,0.7);
+backdrop-filter:blur(10px);
+
+box-shadow:0 0 40px rgba(0,255,157,0.1);
 }
 
-/* INTRO */
-
-#intro{
-
-    position:fixed;
-    inset:0;
-
-    background:#050607;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    z-index:99999;
-
-    transition:1s;
+.icon{
+font-size:70px;
+margin-bottom:10px;
+animation:float 3s ease-in-out infinite;
+filter:drop-shadow(0 0 20px #00ff9d);
 }
 
-#intro.hide{
-
-    opacity:0;
-    visibility:hidden;
+@keyframes float{
+50%{transform:translateY(-10px);}
 }
 
-.intro-text{
-
-    font-size:28px;
-    color:var(--neon);
-
-    text-shadow:
-    0 0 10px var(--neon),
-    0 0 25px var(--neon);
-
-    min-height:50px;
-
-    letter-spacing:1px;
-
-    margin-bottom:18px;
+h1{
+font-size:26px;
+color:#00ff9d;
+text-shadow:0 0 15px #00ff9d;
+margin-bottom:15px;
 }
 
-.cursor{
-
-    display:inline-block;
-
-    width:10px;
-    height:28px;
-
-    background:var(--neon);
-
-    animation:blink .7s infinite;
+.desc{
+font-size:15px;
+line-height:2;
+color:#ffffffcc;
+margin-bottom:20px;
 }
 
-.loading-bar{
-
-    width:260px;
-    height:8px;
-
-    border-radius:20px;
-
-    background:#111;
-
-    overflow:hidden;
-
-    border:1px solid rgba(0,255,157,.25);
+.reason{
+text-align:right;
+padding:18px;
+border:1px solid #00ff9d22;
+border-radius:12px;
+background:rgba(0,255,157,0.03);
+line-height:2;
+color:#c8fff0;
 }
 
-.loading-fill{
-
-    height:100%;
-    width:0%;
-
-    background:
-    linear-gradient(
-    90deg,
-    var(--accent),
-    var(--neon));
-
-    box-shadow:
-    0 0 15px var(--neon);
-
-    transition:width .3s;
-}
-
-@keyframes blink{
-
-    50%{
-        opacity:0;
-    }
-}
-
-header{
-
-    text-align:center;
-    padding:28px 15px;
-
-    font-size:34px;
-    font-weight:bold;
-
-    letter-spacing:2px;
-
-    background:linear-gradient(
-    90deg,
-    var(--accent),
-    var(--neon));
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-
-    text-shadow:0 0 25px var(--neon);
-}
-
-.grid{
-
-    display:grid;
-    gap:18px;
-
-    max-width:980px;
-    margin:auto;
-
-    padding:15px;
-}
-
-.card{
-
-    background:rgba(0,255,157,.04);
-
-    border:1px solid rgba(0,255,157,.3);
-
-    border-radius:18px;
-
-    padding:20px;
-
-    box-shadow:
-    0 0 15px rgba(0,255,157,.08),
-    inset 0 0 10px rgba(0,255,157,.04);
-
-    backdrop-filter:blur(6px);
-
-    transition:.25s;
-}
-
-.card:hover{
-
-    transform:translateY(-3px);
-
-    box-shadow:
-    0 0 22px rgba(0,255,157,.18);
-}
-
-.neon{
-
-    font-size:19px;
-
-    margin-bottom:14px;
-
-    text-shadow:0 0 10px var(--neon);
-}
-
-.status{
-
-    font-size:15px;
-
-    line-height:1.9;
-}
-
-button,
-.dl-btn{
-
-    background:var(--neon);
-
-    color:#000;
-
-    border:none;
-
-    border-radius:10px;
-
-    padding:12px 18px;
-
-    font-weight:bold;
-
-    cursor:pointer;
-
-    text-decoration:none;
-
-    display:inline-block;
-
-    margin:6px 4px;
-
-    transition:.2s;
-}
-
-button:hover,
-.dl-btn:hover{
-
-    background:var(--accent);
-
-    color:white;
-
-    transform:scale(1.03);
-}
-
-.tg-btn{
-
-    background:#229ED9;
-
-    color:white;
-
-    text-align:center;
-
-    text-decoration:none;
-
-    padding:16px;
-
-    border-radius:12px;
-
-    font-size:17px;
-
-    font-weight:bold;
-
-    box-shadow:0 0 15px rgba(34,158,217,.4);
-}
-
-.config-card{
-
-    background:#0b0d10;
-
-    border:1px dashed rgba(0,255,157,.35);
-
-    padding:15px;
-
-    border-radius:14px;
-
-    margin-bottom:18px;
-}
-
-.config-box{
-
-    background:#050607;
-
-    padding:14px;
-
-    border-radius:10px;
-
-    word-break:break-all;
-
-    font-size:13px;
-
-    line-height:1.8;
-
-    border:1px solid rgba(0,255,157,.2);
-
-    margin-bottom:10px;
+.reason b{
+color:#00ff9d;
 }
 
 .badge{
-
-    display:inline-block;
-
-    padding:5px 10px;
-
-    border-radius:20px;
-
-    background:rgba(0,255,157,.15);
-
-    margin-top:10px;
-
-    font-size:12px;
+margin-top:18px;
+display:inline-block;
+padding:6px 12px;
+border-radius:20px;
+background:rgba(0,255,157,0.08);
+border:1px solid #00ff9d33;
+font-size:12px;
 }
 
-.proxy-card{
-    border:1px solid rgba(255,122,0,.35);
+.status{
+margin-top:12px;
+font-size:13px;
+color:#00ff9d;
+animation:blink 1.2s infinite;
 }
 
-.proxy-btn{
-
-    background:var(--accent);
-
-    color:#fff;
+@keyframes blink{
+50%{opacity:0.3;}
 }
 
-.proxy-btn:hover{
-
-    background:#ff9d42;
+/* SCAN */
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:linear-gradient(
+transparent 50%,
+rgba(0,255,157,0.03) 50%
+);
+background-size:100% 5px;
+animation:scan 6s linear infinite;
+z-index:1;
+mix-blend-mode:overlay;
 }
 
-footer{
-
-    text-align:center;
-
-    padding:25px;
-
-    opacity:.6;
-
-    font-size:13px;
-}
-
-/* POPUP */
-
-.popup{
-
-    position:fixed;
-
-    top:25px;
-    right:25px;
-
-    background:rgba(10,10,10,.92);
-
-    border:1px solid var(--accent);
-
-    color:white;
-
-    padding:16px 18px;
-
-    border-radius:14px;
-
-    z-index:9999;
-
-    min-width:260px;
-
-    box-shadow:
-    0 0 25px rgba(255,122,0,.35);
-
-    animation:showPopup .35s ease;
-}
-
-.popup-title{
-
-    color:var(--accent);
-
-    font-size:16px;
-
-    font-weight:bold;
-
-    margin-bottom:8px;
-
-    text-shadow:0 0 10px var(--accent);
-}
-
-.popup-text{
-
-    opacity:.9;
-
-    line-height:1.8;
-
-    font-size:14px;
-}
-
-@keyframes showPopup{
-
-    from{
-        opacity:0;
-        transform:translateY(-15px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-.comments-box{
-
-    max-width:980px;
-
-    margin:25px auto;
-
-    padding:15px;
+@keyframes scan{
+from{transform:translateY(0);}
+to{transform:translateY(120px);}
 }
 
 </style>
@@ -451,464 +144,91 @@ footer{
 
 <body>
 
-<!-- INTRO -->
+<canvas id="c"></canvas>
+<div class="overlay"></div>
 
-<div id="intro">
+<div class="box">
 
-<div class="intro-text">
+<div class="icon">🛠️</div>
 
-<span id="typing"></span>
-<span class="cursor"></span>
+<h1>سیستم در حال ارتقاء امنیتی است</h1>
+
+<div class="desc">
+سایت «مسجد محله» به‌صورت موقت برای انجام به‌روزرسانی‌های امنیتی و بهبود عملکرد از دسترس خارج شده است.
+</div>
+
+<div class="reason">
+
+🛠️ <b>اطلاعیه سیستم</b><br><br>
+
+⚡ <b>دلیل توقف:</b><br>
+به منظور ارتقاء و به‌روزرسانی کدهای امنیتی، سرویس سایت به‌طور موقت متوقف شده است.<br><br>
+
+🔒 <b>توضیحات:</b><br>
+این عملیات برای افزایش امنیت، پایداری و بهبود عملکرد کلی سیستم در حال انجام است.<br><br>
+
+⚙️ <b>وضعیت:</b><br>
+فرآیند ارتقاء امنیتی در حال اجراست و پس از تکمیل، سرویس‌ها مجدداً فعال خواهند شد.<br><br>
+
+🚀 <b>نتیجه:</b><br>
+نسخه جدید با امنیت بهتر و عملکرد پایدارتر به‌زودی در دسترس قرار می‌گیرد.
 
 </div>
 
-<div class="loading-bar">
-<div class="loading-fill" id="loadingFill"></div>
+<div class="status">
+⏳ در حال بروزرسانی...
 </div>
-
-</div>
-
-<header>
-⚡ مسجد محله ⚡
-</header>
-
-<div class="grid">
-
-<div class="card">
-
-<div class="neon">
-📡 پیام لحظه‌ای
-</div>
-
-<p id="msg" class="status">
-در حال بارگذاری...
-</p>
-
-</div>
-<div class="card">
-
-<div class="neon">
-⭐ بهترین کانفیگ امروز
-</div>
-
-<div id="bestConfigBox" class="config-box">
-در حال بارگذاری...
-</div>
-
-<button id="bestConfigCopyBtn">
-📋 کپی کانفیگ
-</button>
 
 <div class="badge">
-🏆 منتخب امروز
+SA SYSTEM UPDATE MODE
 </div>
 
 </div>
-<div class="card">
-
-<div class="neon">
-📥 دانلود اپ‌ها
-</div>
-
-<a class="dl-btn" href="VPN-AMT.apk" download>
-⬇️ دانلود VPN AMT
-</a>
-
-<a class="dl-btn" href="SHIR-O-KHORSHID.apk" download>
-⬇️ دانلود سایفون شیر و خورشید
-</a>
-
-<a class="dl-btn" href="NPV.apk" download>
-⬇️ دانلود NPV
-</a>
-
-<a class="dl-btn" href="V2RAY.apk" download>
-⬇️ دانلود ویتوری
-</a>
-
-<a class="dl-btn"
-href="TAJ-TUNNEL.apk"
-download>
-
-⬇️ دانلود Taj Tunnel Pro
-
-</a>
-
-<p style="opacity:.7">
-نسخه اختصاصی اندروید
-</p>
-
-</div>
-
-<div class="card">
-
-<div class="neon">
-🔥 کانفیگ‌های رایگان
-</div>
-
-<div id="configs"></div>
-
-</div>
-
-<div class="card">
-
-<div class="neon">
-🛰 پروکسی تلگرام
-</div>
-
-<div id="proxies"></div>
-
-</div>
-
-<a href="https://t.me/ddddvasel"
-target="_blank"
-class="tg-btn">
-
-📢 ورود به کانال تلگرام
-
-</a>
-
-</div>
-
-<!-- COMMENTS -->
-
-<div class="comments-box">
-
-<div class="card">
-
-<div class="neon">
-💬 نظرات کاربران
-</div>
-
-<div class="giscus"></div>
-
-</div>
-
-</div>
-
-<footer>
-SA CYBER NET • ONLINE
-</footer>
 
 <script>
 
-const audioCtx =
-new (window.AudioContext ||
-window.webkitAudioContext)();
+/* MATRIX BACKGROUND */
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
 
-function beep(freq,time=.08){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
+let chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*";
+chars = chars.split("");
 
-    o.connect(g);
-    g.connect(audioCtx.destination);
+const fontSize = 14;
+const columns = canvas.width / fontSize;
 
-    o.frequency.value = freq;
-    g.gain.value = .04;
+const drops = [];
 
-    o.start();
-    o.stop(audioCtx.currentTime + time);
+for(let i=0;i<columns;i++)
+drops[i]=1;
+
+function draw(){
+
+ctx.fillStyle="rgba(0,0,0,0.08)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="#00ff9d";
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+
+const text = chars[Math.floor(Math.random()*chars.length)];
+
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize > canvas.height && Math.random()>0.975)
+drops[i]=0;
+
+drops[i]++;
 }
-
-/* INTRO ANIMATION */
-
-const introTexts = [
-
-"به مسجد محله خوش آمدید",
-"در حال اتصال . . .",
-"اتصال موفق"
-
-];
-
-let introIndex = 0;
-let charIndex = 0;
-
-const typing =
-document.getElementById("typing");
-
-const fill =
-document.getElementById("loadingFill");
-
-function typeIntro(){
-
-    if(introIndex >= introTexts.length){
-
-        setTimeout(()=>{
-
-            document
-            .getElementById("intro")
-            .classList.add("hide");
-
-        },700);
-
-        return;
-    }
-
-    const current =
-    introTexts[introIndex];
-
-    if(charIndex < current.length){
-
-        typing.innerHTML +=
-        current.charAt(charIndex);
-
-        beep(700,.03);
-
-        charIndex++;
-
-        setTimeout(typeIntro,70);
-
-    }else{
-
-        fill.style.width =
-        ((introIndex+1)/3)*100 + "%";
-
-        setTimeout(()=>{
-
-            typing.innerHTML = "";
-
-            charIndex = 0;
-
-            introIndex++;
-
-            typeIntro();
-
-        },1000);
-    }
-}
-
-function copyConfig(text){
-
-    navigator.clipboard.writeText(text);
-
-    beep(700,.08);
-
-    setTimeout(()=>beep(1100,.12),90);
-
-    showPopup(
-        "✅ کپی شد",
-        "کانفیگ داخل کلیپ‌بورد ذخیره شد"
-    );
-}
-
-function showPopup(title,text){
-
-    const old =
-    document.querySelector(".popup");
-
-    if(old) old.remove();
-
-    const popup =
-    document.createElement("div");
-
-    popup.className = "popup";
-
-    popup.innerHTML = `
-
-    <div class="popup-title">
-    ${title}
-    </div>
-
-    <div class="popup-text">
-    ${text}
-    </div>
-
-    `;
-
-    document.body.appendChild(popup);
-
-    setTimeout(()=>{
-        popup.remove();
-    },3000);
-}
-
-async function pingTest(url,el){
-
-    el.innerHTML = "⏳ تست...";
-
-    try{
-
-        const start = Date.now();
-
-        await fetch(url,{
-            mode:"no-cors",
-            cache:"no-cache"
-        });
-
-        const ping =
-        Date.now() - start;
-
-        let color =
-        ping < 250
-        ? "#00ff9d"
-        : ping < 500
-        ? "yellow"
-        : "red";
-
-        el.innerHTML =
-        `⚡ <span style="color:${color}">
-        ${ping}ms
-        </span>`;
-
-    }catch{
-
-        el.innerHTML = "❌ خطا";
-    }
-}
-
-async function loadData(){
-
-let data = {
-
-message:
-"🟢 سامانه فعال است | کانفیگ‌ها به‌روز شدند",
-
-configs:[],
-
-proxies:[]
-};
-
-try{
-
-const res =
-await fetch(
-"data.json?v="+Date.now()
-);
-
-if(res.ok){
-
-data = await res.json();
-}
-
-}catch(e){}
-
-document
-.getElementById("msg")
-.innerHTML = data.message;
-
-/* CONFIGS */
-
-const configs =
-document.getElementById("configs");
-
-configs.innerHTML = "";
-
-(data.configs || [])
-.forEach(cfg=>{
-
-const box =
-document.createElement("div");
-
-box.className =
-"config-card";
-
-box.innerHTML = `
-
-<div class="config-box">
-${cfg.link}
-</div>
-
-<button onclick="copyConfig('${cfg.link}')">
-📋 کپی
-</button>
-
-<button onclick="
-pingTest(
-'${cfg.testUrl || "https://google.com"}',
-this.nextElementSibling
-)">
-⚡ تست پینگ
-</button>
-
-<span></span>
-
-<div class="badge">
-${cfg.type || "CONFIG"}
-${cfg.remark ? " • "+cfg.remark : ""}
-</div>
-
-`;
-
-configs.appendChild(box);
-
-});
-
-/* PROXIES */
-
-const proxies =
-document.getElementById("proxies");
-
-proxies.innerHTML = "";
-
-(data.proxies || [])
-.forEach(proxy=>{
-
-const box =
-document.createElement("div");
-
-box.className =
-"config-card proxy-card";
-
-box.innerHTML = `
-
-<div class="config-box">
-${proxy.link}
-</div>
-
-<button class="proxy-btn"
-onclick="window.open('${proxy.link}','_blank')">
-🚀 اتصال
-</button>
-
-<button onclick="copyConfig('${proxy.link}')">
-📋 کپی
-</button>
-
-<div class="badge">
-${proxy.type || "PROXY"}
-${proxy.remark ? " • "+proxy.remark : ""}
-</div>
-
-`;
-
-proxies.appendChild(box);
-
-});
 
 }
 
-window.onload = ()=>{
+setInterval(draw,33);
 
-typeIntro();
-
-loadData();
-
-setInterval(loadData,20000);
-
-setTimeout(()=>beep(300,.1),100);
-setTimeout(()=>beep(600,.1),260);
-setTimeout(()=>beep(900,.1),420);
-
-};
-
-</script>
-
-<script src="https://giscus.app/client.js"
-        data-repo="Sadra915/mosque-site"
-        data-repo-id="R_kgDOStCu-g"
-        data-category="General"
-        data-category-id="DIC_kwDOStCu-s4C-WLS"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="0"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="noborder_dark"
-        data-lang="fa"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
 </script>
 
 </body>
