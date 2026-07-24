@@ -943,6 +943,17 @@ tsParticles.load("tsparticles", {
   detectRetina: true
 });
 </script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="ratings.js"></script>
+
+<style>
+.rating-widget{display:flex;gap:10px;margin-top:8px;}
+.vote-btn{background:#0b0d10;border:1px solid rgba(0,255,157,.3);color:var(--neon);
+  border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;}
+.vote-btn:hover{border-color:var(--neon);}
+.rating-widget.voted .vote-btn{opacity:.5;pointer-events:none;}
+</style>
 
 </body>
 </html>
