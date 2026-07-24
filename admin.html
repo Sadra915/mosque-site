@@ -29,6 +29,12 @@ button.danger{background:var(--bad);color:#fff;}
 .hint{font-size:12px;opacity:.6;line-height:1.7;margin-top:6px;}
 .hidden{display:none;}
 a{color:var(--neon);}
+.config-box{background:#050607;padding:10px;border-radius:8px;word-break:break-all;
+  font-size:13px;border:1px solid rgba(0,255,157,.2);margin-bottom:8px;}
+.status{font-size:14px;line-height:1.8;}
+.chat-mod-item{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.chat-mod-text{flex:1;}
+.chat-mod-name{color:var(--accent);font-weight:bold;}
 </style>
 </head>
 <body>
@@ -110,11 +116,15 @@ a{color:var(--neon);}
     <div class="msg" id="fbMsg"></div>
   </div>
 
+  <div id="chatAdminHost"></div>
+
 </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+<script src="admin-chat.js"></script>
 
 <script>
 let state = { owner:"", repo:"", branch:"main", token:"", sha:null,
@@ -278,8 +288,8 @@ async function saveAll(){
   }
 }
 
-/* ---------- آمار و گزارش‌های خرابی از Firebase ---------- */
-// همون تنظیمات پروژه‌ای که در ratings.js استفاده شده
+/* ---------- آمار، گزارش‌های خرابی و چت از Firebase ---------- */
+// همون تنظیمات پروژه‌ای که در ratings.js / chat.js استفاده شده
 const firebaseConfig = {
   apiKey: "AIzaSyColBr5qGq66DWOkqyttQfLAvPjE5KXr68",
   authDomain: "site-501b3.firebaseapp.com",
@@ -323,7 +333,7 @@ function connectFirebase(){
         const item = document.createElement("div");
         item.className = "item";
         item.innerHTML = `
-          <div class="config-box">${r.link || key}</div>
+          <div class="config-box">${escapeHtml(r.link || key)}</div>
           <p class="status">🚫 تعداد گزارش: <b>${r.count||0}</b></p>
           <button class="danger" onclick="clearReport('${key}')">✅ برطرف شد / پاک کردن</button>
         `;
@@ -331,10 +341,20 @@ function connectFirebase(){
       });
     });
 
+    if(window.ChatAdmin){
+      ChatAdmin.connect(fbDb);
+    }
+
   }catch(e){
     msg.textContent = "❌ " + e.message;
     msg.className = "msg err";
   }
+}
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function clearReport(key){
