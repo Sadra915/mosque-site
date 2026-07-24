@@ -68,6 +68,20 @@ a{color:var(--neon);}
   </div>
 
   <div class="panel">
+    <h3>🚦 بنر وضعیت فیلترینگ / قطعی اینترنت</h3>
+    <label>وضعیت</label>
+    <select id="statusLevel">
+      <option value="ok">🟢 عادی (بنر نمایش داده نمی‌شود)</option>
+      <option value="warning">🟡 هشدار</option>
+      <option value="critical">🔴 بحرانی</option>
+    </select>
+    <label>متن بنر</label>
+    <input id="statusText" placeholder="مثلاً: اینترنت موبایل کند شده، از کانفیگ‌های WireGuard استفاده کنید">
+    <button onclick="saveAll()">💾 ذخیره وضعیت</button>
+    <div class="hint">اگر وضعیت را روی «عادی» بگذارید یا متن را خالی کنید، بنر روی سایت نمایش داده نمی‌شود.</div>
+  </div>
+
+  <div class="panel">
     <h3>🔥 کانفیگ‌های رایگان</h3>
     <div id="configsList"></div>
     <button onclick="addConfig()">➕ افزودن کانفیگ</button>
@@ -85,12 +99,26 @@ a{color:var(--neon);}
     <div class="hint">ذخیره یعنی فایل data.json مستقیم در مخزن گیت‌هاب کامیت می‌شه. سایت طی چند ثانیه تا چند دقیقه (کش GitHub Pages) به‌روز می‌شه.</div>
   </div>
 
+  <div class="panel">
+    <h3>📊 آمار و گزارش‌های خرابی</h3>
+    <button onclick="connectFirebase()">📡 نمایش آمار زنده</button>
+    <div id="fbStatsBox" class="hidden">
+      <p class="status">👥 آنلاین الان: <b id="fbOnline">-</b> &nbsp; | &nbsp; 👁 کل بازدید: <b id="fbTotal">-</b></p>
+      <h4>🚫 گزارش‌های خرابی</h4>
+      <div id="fbReports"></div>
+    </div>
+    <div class="msg" id="fbMsg"></div>
+  </div>
+
 </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
 let state = { owner:"", repo:"", branch:"main", token:"", sha:null,
-              data:{ message:"", configs:[], proxies:[] } };
+              data:{ message:"", status:{level:"ok",text:""}, configs:[], proxies:[] } };
 
 function connect(){
   state.owner  = document.getElementById("ghOwner").value.trim();
@@ -127,7 +155,7 @@ async function loadFile(){
     if(res.status === 404){
       // No data.json yet, start fresh
       state.sha = null;
-      state.data = { message:"🟢 سامانه فعال است", configs:[], proxies:[] };
+      state.data = { message:"🟢 سامانه فعال است", status:{level:"ok",text:""}, configs:[], proxies:[] };
     } else if(!res.ok){
       throw new Error("خطا در دریافت فایل ("+res.status+"). توکن یا نام مخزن رو چک کنید.");
     } else {
@@ -136,6 +164,7 @@ async function loadFile(){
       state.data = JSON.parse(decodeURIComponent(escape(atob(json.content))));
       state.data.configs = state.data.configs || [];
       state.data.proxies = state.data.proxies || [];
+      state.data.status = state.data.status || {level:"ok",text:""};
     }
 
     document.getElementById("loginBox").classList.add("hidden");
@@ -150,6 +179,10 @@ async function loadFile(){
 
 function render(){
   document.getElementById("siteMessage").value = state.data.message || "";
+
+  const status = state.data.status || { level:"ok", text:"" };
+  document.getElementById("statusLevel").value = status.level || "ok";
+  document.getElementById("statusText").value = status.text || "";
 
   const cfgList = document.getElementById("configsList");
   cfgList.innerHTML = "";
@@ -199,6 +232,11 @@ function removeItem(key, i){
 
 async function saveAll(){
   state.data.message = document.getElementById("siteMessage").value;
+  state.data.status = {
+    level: document.getElementById("statusLevel").value,
+    text: document.getElementById("statusText").value.trim()
+  };
+
   const msg = document.getElementById("saveMsg");
   msg.textContent = "در حال ذخیره روی گیت‌هاب...";
   msg.className = "msg";
@@ -238,6 +276,69 @@ async function saveAll(){
     msg.textContent = "❌ " + e.message;
     msg.className = "msg err";
   }
+}
+
+/* ---------- آمار و گزارش‌های خرابی از Firebase ---------- */
+// همون تنظیمات پروژه‌ای که در ratings.js استفاده شده
+const firebaseConfig = {
+  apiKey: "AIzaSyColBr5qGq66DWOkqyttQfLAvPjE5KXr68",
+  authDomain: "site-501b3.firebaseapp.com",
+  databaseURL: "https://site-501b3-default-rtdb.firebaseio.com",
+  projectId: "site-501b3"
+};
+
+let fbDb = null;
+
+function connectFirebase(){
+  const msg = document.getElementById("fbMsg");
+  try{
+    if(!firebase.apps.length){
+      firebase.initializeApp(firebaseConfig);
+    }
+    fbDb = firebase.database();
+
+    document.getElementById("fbStatsBox").classList.remove("hidden");
+    msg.textContent = "✅ متصل شد";
+    msg.className = "msg ok";
+
+    fbDb.ref("presence").on("value", snap=>{
+      document.getElementById("fbOnline").textContent = snap.numChildren();
+    });
+    fbDb.ref("stats/totalVisits").on("value", snap=>{
+      document.getElementById("fbTotal").textContent = snap.val() || 0;
+    });
+
+    fbDb.ref("reports").on("value", snap=>{
+      const box = document.getElementById("fbReports");
+      box.innerHTML = "";
+      const val = snap.val() || {};
+      const entries = Object.entries(val).sort((a,b)=> (b[1].count||0)-(a[1].count||0));
+
+      if(entries.length === 0){
+        box.innerHTML = '<p class="hint">هیچ گزارشی ثبت نشده.</p>';
+        return;
+      }
+
+      entries.forEach(([key, r])=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <div class="config-box">${r.link || key}</div>
+          <p class="status">🚫 تعداد گزارش: <b>${r.count||0}</b></p>
+          <button class="danger" onclick="clearReport('${key}')">✅ برطرف شد / پاک کردن</button>
+        `;
+        box.appendChild(item);
+      });
+    });
+
+  }catch(e){
+    msg.textContent = "❌ " + e.message;
+    msg.className = "msg err";
+  }
+}
+
+function clearReport(key){
+  fbDb.ref("reports/" + key).remove();
 }
 
 // auto-restore session
