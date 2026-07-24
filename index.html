@@ -473,6 +473,92 @@ footer{
     pointer-events:none;
 }
 
+/* LIVE CHAT */
+
+.chat-box{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.chat-messages{
+    height:280px;
+    overflow-y:auto;
+    background:#0b0d10;
+    border:1px solid rgba(0,255,157,.2);
+    border-radius:10px;
+    padding:10px;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.chat-msg{
+    padding:6px 0;
+    border-bottom:1px solid rgba(0,255,157,.08);
+}
+
+.chat-msg:last-child{
+    border-bottom:none;
+}
+
+.chat-msg-name{
+    color:var(--accent);
+    font-weight:bold;
+    margin-left:6px;
+}
+
+.chat-msg-time{
+    opacity:.5;
+    font-size:11px;
+}
+
+.chat-msg-text{
+    margin-top:2px;
+    word-break:break-word;
+    color:#e8fff5;
+}
+
+.chat-input-row{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.chat-name{
+    background:#0b0d10;
+    border:1px solid rgba(0,255,157,.3);
+    color:var(--neon);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:monospace;
+    font-size:13px;
+}
+
+.chat-send-row{
+    display:flex;
+    gap:8px;
+}
+
+.chat-text{
+    flex:1;
+    background:#0b0d10;
+    border:1px solid rgba(0,255,157,.3);
+    color:var(--neon);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:monospace;
+    font-size:13px;
+}
+
+.chat-status-msg{
+    font-size:12px;
+    min-height:16px;
+}
+
+.chat-status-msg.err{
+    color:#ff7a7a;
+}
+
 /* LITE MODE */
 
 body.lite-mode::before,
@@ -604,6 +690,16 @@ download>
 </div>
 
 <div id="proxies"></div>
+
+</div>
+
+<div class="card">
+
+<div class="neon">
+💬 چت آنلاین
+</div>
+
+<div id="liveChat"></div>
 
 </div>
 
@@ -940,6 +1036,7 @@ setInterval(loadData,20000);
 
 initLiteMode();
 initVisitorStats(document.getElementById("msg").parentElement);
+initLiveChat(document.getElementById("liveChat"));
 
 setTimeout(()=>beep(300,.1),100);
 setTimeout(()=>beep(600,.1),260);
@@ -1007,6 +1104,9 @@ tsParticles.load("tsparticles", {
 
 <!-- EXTRA FEATURES: status banner, lite mode, visitor stats, broken report -->
 <script src="site-features.js"></script>
+
+<!-- LIVE CHAT (Firebase) -->
+<script src="chat.js"></script>
 
 </body>
 </html>
