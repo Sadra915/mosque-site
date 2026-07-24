@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت | مسجد محله</title>
+<style>
+:root{--neon:#00ff9d;--accent:#ff7a00;--bad:#ff4d4d;}
+*{box-sizing:border-box;}
+body{margin:0;background:#050607;color:var(--neon);font-family:monospace;padding:20px;}
+h1{text-align:center;text-shadow:0 0 10px var(--neon);}
+.wrap{max-width:820px;margin:auto;}
+.login-box,.panel{background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.3);
+  border-radius:16px;padding:20px;margin-bottom:20px;}
+label{display:block;margin:10px 0 4px;font-size:14px;opacity:.85;}
+input,textarea,select{width:100%;background:#0b0d10;border:1px solid rgba(0,255,157,.3);
+  color:var(--neon);border-radius:8px;padding:10px;font-family:monospace;font-size:14px;}
+textarea{min-height:70px;resize:vertical;}
+button{background:var(--neon);color:#000;border:none;border-radius:10px;padding:10px 16px;
+  font-weight:bold;cursor:pointer;margin:6px 6px 0 0;}
+button:hover{background:var(--accent);color:#fff;}
+button.danger{background:var(--bad);color:#fff;}
+.item{border:1px dashed rgba(0,255,157,.35);border-radius:12px;padding:14px;margin-bottom:12px;position:relative;}
+.item .row{display:flex;gap:10px;}
+.item .row>div{flex:1;}
+.msg{margin-top:10px;font-size:13px;min-height:20px;}
+.msg.ok{color:var(--neon);}
+.msg.err{color:var(--bad);}
+.hint{font-size:12px;opacity:.6;line-height:1.7;margin-top:6px;}
+.hidden{display:none;}
+a{color:var(--neon);}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>⚙️ پنل مدیریت کانفیگ‌ها</h1>
+
+<!-- LOGIN -->
+<div class="login-box" id="loginBox">
+  <label>نام کاربری گیت‌هاب (owner)</label>
+  <input id="ghOwner" placeholder="مثلاً Sadra915">
+
+  <label>نام مخزن (repo)</label>
+  <input id="ghRepo" placeholder="mosque-site">
+
+  <label>شاخه (branch)</label>
+  <input id="ghBranch" placeholder="main" value="main">
+
+  <label>GitHub Personal Access Token</label>
+  <input id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxx">
+  <div class="hint">
+    این توکن فقط داخل مرورگر خودتون ذخیره می‌مونه (sessionStorage) و جایی ارسال نمی‌شه جز به GitHub.
+    از <a href="https://github.com/settings/tokens?type=beta" target="_blank">اینجا</a> یه Fine-grained token با دسترسی
+    <b>Contents: Read and write</b> فقط برای همین ریپو بسازید. توکن رو با کسی به اشتراک نذارید.
+  </div>
+
+  <button onclick="connect()">🔑 اتصال به مخزن</button>
+  <div class="msg" id="loginMsg"></div>
+</div>
+
+<!-- PANEL -->
+<div id="panelArea" class="hidden">
+
+  <div class="panel">
+    <label>پیام لحظه‌ای بالای سایت</label>
+    <textarea id="siteMessage"></textarea>
+    <button onclick="saveAll()">💾 ذخیره پیام</button>
+  </div>
+
+  <div class="panel">
+    <h3>🔥 کانفیگ‌های رایگان</h3>
+    <div id="configsList"></div>
+    <button onclick="addConfig()">➕ افزودن کانفیگ</button>
+  </div>
+
+  <div class="panel">
+    <h3>🛰 پروکسی‌های تلگرام</h3>
+    <div id="proxiesList"></div>
+    <button onclick="addProxy()">➕ افزودن پروکسی</button>
+  </div>
+
+  <div class="panel">
+    <button onclick="saveAll()">💾 ذخیره همه تغییرات روی گیت‌هاب</button>
+    <div class="msg" id="saveMsg"></div>
+    <div class="hint">ذخیره یعنی فایل data.json مستقیم در مخزن گیت‌هاب کامیت می‌شه. سایت طی چند ثانیه تا چند دقیقه (کش GitHub Pages) به‌روز می‌شه.</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+let state = { owner:"", repo:"", branch:"main", token:"", sha:null,
+              data:{ message:"", configs:[], proxies:[] } };
+
+function connect(){
+  state.owner  = document.getElementById("ghOwner").value.trim();
+  state.repo   = document.getElementById("ghRepo").value.trim();
+  state.branch = document.getElementById("ghBranch").value.trim() || "main";
+  state.token  = document.getElementById("ghToken").value.trim();
+
+  const msg = document.getElementById("loginMsg");
+
+  if(!state.owner || !state.repo || !state.token){
+    msg.textContent = "لطفاً همه فیلدها رو پر کنید.";
+    msg.className = "msg err";
+    return;
+  }
+
+  sessionStorage.setItem("gh_admin", JSON.stringify(state));
+  loadFile();
+}
+
+async function loadFile(){
+  const msg = document.getElementById("loginMsg");
+  msg.textContent = "در حال اتصال...";
+  msg.className = "msg";
+
+  try{
+    const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/data.json?ref=${state.branch}`;
+    const res = await fetch(url, {
+      headers:{
+        "Authorization": `Bearer ${state.token}`,
+        "Accept":"application/vnd.github+json"
+      }
+    });
+
+    if(res.status === 404){
+      // No data.json yet, start fresh
+      state.sha = null;
+      state.data = { message:"🟢 سامانه فعال است", configs:[], proxies:[] };
+    } else if(!res.ok){
+      throw new Error("خطا در دریافت فایل ("+res.status+"). توکن یا نام مخزن رو چک کنید.");
+    } else {
+      const json = await res.json();
+      state.sha = json.sha;
+      state.data = JSON.parse(decodeURIComponent(escape(atob(json.content))));
+      state.data.configs = state.data.configs || [];
+      state.data.proxies = state.data.proxies || [];
+    }
+
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("panelArea").classList.remove("hidden");
+    render();
+
+  }catch(e){
+    msg.textContent = e.message;
+    msg.className = "msg err";
+  }
+}
+
+function render(){
+  document.getElementById("siteMessage").value = state.data.message || "";
+
+  const cfgList = document.getElementById("configsList");
+  cfgList.innerHTML = "";
+  state.data.configs.forEach((cfg, i)=>{
+    cfgList.innerHTML += `
+    <div class="item">
+      <label>لینک کانفیگ</label>
+      <textarea onchange="state.data.configs[${i}].link=this.value">${cfg.link||""}</textarea>
+      <div class="row">
+        <div><label>نوع</label><input value="${cfg.type||""}" onchange="state.data.configs[${i}].type=this.value"></div>
+        <div><label>توضیح</label><input value="${cfg.remark||""}" onchange="state.data.configs[${i}].remark=this.value"></div>
+      </div>
+      <label>آدرس تست پینگ (اختیاری)</label>
+      <input value="${cfg.testUrl||""}" onchange="state.data.configs[${i}].testUrl=this.value">
+      <button class="danger" onclick="removeItem('configs',${i})">🗑 حذف</button>
+    </div>`;
+  });
+
+  const proxList = document.getElementById("proxiesList");
+  proxList.innerHTML = "";
+  state.data.proxies.forEach((p, i)=>{
+    proxList.innerHTML += `
+    <div class="item">
+      <label>لینک پروکسی</label>
+      <textarea onchange="state.data.proxies[${i}].link=this.value">${p.link||""}</textarea>
+      <div class="row">
+        <div><label>نوع</label><input value="${p.type||""}" onchange="state.data.proxies[${i}].type=this.value"></div>
+        <div><label>توضیح</label><input value="${p.remark||""}" onchange="state.data.proxies[${i}].remark=this.value"></div>
+      </div>
+      <button class="danger" onclick="removeItem('proxies',${i})">🗑 حذف</button>
+    </div>`;
+  });
+}
+
+function addConfig(){
+  state.data.configs.push({link:"", type:"CONFIG", remark:"", testUrl:""});
+  render();
+}
+function addProxy(){
+  state.data.proxies.push({link:"", type:"PROXY", remark:""});
+  render();
+}
+function removeItem(key, i){
+  state.data[key].splice(i,1);
+  render();
+}
+
+async function saveAll(){
+  state.data.message = document.getElementById("siteMessage").value;
+  const msg = document.getElementById("saveMsg");
+  msg.textContent = "در حال ذخیره روی گیت‌هاب...";
+  msg.className = "msg";
+
+  try{
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(state.data, null, 2))));
+    const url = `https://api.github.com/repos/${state.owner}/${state.repo}/contents/data.json`;
+
+    const body = {
+      message: "بروزرسانی کانفیگ‌ها از پنل مدیریت",
+      content: content,
+      branch: state.branch
+    };
+    if(state.sha) body.sha = state.sha;
+
+    const res = await fetch(url, {
+      method:"PUT",
+      headers:{
+        "Authorization": `Bearer ${state.token}`,
+        "Accept":"application/vnd.github+json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(!res.ok){
+      const errJson = await res.json().catch(()=>({}));
+      throw new Error("ذخیره ناموفق: " + (errJson.message || res.status));
+    }
+
+    const result = await res.json();
+    state.sha = result.content.sha;
+
+    msg.textContent = "✅ ذخیره شد! سایت به‌زودی به‌روز می‌شه.";
+    msg.className = "msg ok";
+
+  }catch(e){
+    msg.textContent = "❌ " + e.message;
+    msg.className = "msg err";
+  }
+}
+
+// auto-restore session
+window.onload = ()=>{
+  const saved = sessionStorage.getItem("gh_admin");
+  if(saved){
+    state = JSON.parse(saved);
+    document.getElementById("ghOwner").value = state.owner;
+    document.getElementById("ghRepo").value = state.repo;
+    document.getElementById("ghBranch").value = state.branch;
+    document.getElementById("ghToken").value = state.token;
+  }
+};
+</script>
+</body>
+</html>
