@@ -1,6 +1,6 @@
 /* =========================================================
    ویجت چت آنلاین - مسجد محله
-   دکمه شناور + پنجره کشویی، همگام‌سازی با Firebase Realtime DB
+   دکمه شناور + صفحه‌ی تمام‌صفحه (مثل گروه تلگرام)، همگام‌سازی با Firebase Realtime DB
    نیازمند: config.js (قبل از این فایل لود شود)
    ========================================================= */
 
@@ -115,10 +115,10 @@
 
       <div id="chatPanel">
         <div class="chat-head">
+          <button class="chat-icon-btn" id="chatCloseBtn" title="بازگشت">→</button>
           <div class="chat-head-title">💬 گفت‌وگوی آنلاین <span id="chatHeadOnline" style="font-weight:normal;font-size:11px;opacity:.7;"></span></div>
           <div class="chat-head-actions">
             <button class="chat-icon-btn" id="chatSettingsBtn" title="تنظیمات">⚙️</button>
-            <button class="chat-icon-btn" id="chatCloseBtn" title="بستن">✕</button>
           </div>
         </div>
 
@@ -275,6 +275,11 @@
     els.body.addEventListener("scroll", () => {
       if (els.body.scrollTop < 30) maybeLoadMore();
     });
+
+    // بستن صفحه‌ی تمام‌صفحه با کلید Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && state.panelOpen) closePanel();
+    });
   }
 
   function autoGrow() {
@@ -285,6 +290,7 @@
   function openPanel() {
     state.panelOpen = true;
     els.panel.classList.add("open");
+    document.body.classList.add("chat-open"); // قفل اسکرول پس‌زمینه‌ی سایت
     state.unread = 0;
     updateUnreadBadge();
     state.lastSeenTime = Date.now();
@@ -298,6 +304,7 @@
   function closePanel() {
     state.panelOpen = false;
     els.panel.classList.remove("open");
+    document.body.classList.remove("chat-open"); // بازگرداندن اسکرول سایت
   }
 
   function updateUnreadBadge() {
@@ -524,202 +531,4 @@
 
     // اکشن‌ها
     row.querySelectorAll('[data-act="react"]').forEach(el => el.onclick = () => {
-      row.querySelector(".chat-reaction-picker").classList.toggle("show");
-    });
-    row.querySelectorAll("[data-pick]").forEach(el => el.onclick = () => {
-      toggleReaction(id, el.getAttribute("data-pick"));
-      row.querySelector(".chat-reaction-picker").classList.remove("show");
-    });
-    row.querySelectorAll(".chat-reaction-pill").forEach(el => el.onclick = () => {
-      toggleReaction(id, el.getAttribute("data-emoji"));
-    });
-    const replyBtn = row.querySelector('[data-act="reply"]');
-    if (replyBtn) replyBtn.onclick = () => setReplyTarget(id);
-    const editBtn = row.querySelector('[data-act="edit"]');
-    if (editBtn) editBtn.onclick = () => startEdit(id, m);
-    const delBtn = row.querySelector('[data-act="delete"]');
-    if (delBtn) delBtn.onclick = () => deleteOwnMessage(id);
-    const img = row.querySelector(".chat-msg-img");
-    if (img) img.onclick = () => {
-      els.lightboxImg.src = img.getAttribute("data-full");
-      els.lightbox.classList.add("show");
-    };
-
-    return row;
-  }
-
-  function toggleReaction(id, emoji) {
-    const ref = ensureFirebase().ref(`chat/messages/${id}/reactions/${emoji}/${uid}`);
-    ref.once("value").then(snap => {
-      if (snap.exists()) ref.remove(); else ref.set(true);
-    });
-  }
-
-  function setReplyTarget(id) {
-    state.replyTarget = id;
-    state.editTarget = null;
-    if (!id) {
-      els.replyPreview.classList.remove("show");
-      return;
-    }
-    const m = state.messages[id];
-    els.replyText.textContent = "↩ پاسخ به " + (m ? m.name + ": " + (m.text || "").slice(0, 40) : "");
-    els.replyPreview.classList.add("show");
-    els.textInput.focus();
-  }
-
-  function startEdit(id, m) {
-    state.editTarget = id;
-    state.replyTarget = null;
-    els.replyPreview.classList.add("show");
-    els.replyText.textContent = "✏️ در حال ویرایش پیام";
-    els.textInput.value = m.text || "";
-    autoGrow();
-    els.textInput.focus();
-  }
-
-  function deleteOwnMessage(id) {
-    const m = state.messages[id];
-    if (!m || m.uid !== uid) return;
-    if (!confirm("پیام حذف شود؟")) return;
-    ensureFirebase().ref("chat/messages/" + id).remove();
-  }
-
-  /* ---------- تایپینگ ---------- */
-  function handleTyping() {
-    const ref = ensureFirebase().ref("chat/typing/" + uid);
-    ref.set({ name: getName(), time: Date.now() });
-    clearTimeout(state.typingClearTimer);
-    state.typingClearTimer = setTimeout(() => ref.remove(), CFG.typingTimeoutMs);
-  }
-
-  function listenTyping() {
-    ensureFirebase().ref("chat/typing").on("value", (snap) => {
-      const val = snap.val() || {};
-      const now = Date.now();
-      const names = Object.entries(val)
-        .filter(([id, t]) => id !== uid && (now - t.time) < CFG.typingTimeoutMs + 1000)
-        .map(([id, t]) => t.name);
-      if (names.length === 0) { els.typingLine.textContent = ""; return; }
-      const label = names.length === 1
-        ? `${names[0]} در حال نوشتن است...`
-        : `${names.length} نفر در حال نوشتن هستند...`;
-      els.typingLine.textContent = label;
-    });
-  }
-
-  /* ---------- ارسال پیام ---------- */
-  function checkSpam() {
-    const now = Date.now();
-    state.lastSentTimestamps = state.lastSentTimestamps.filter(t => now - t < CFG.spamWindowMs);
-    if (state.lastSentTimestamps.length >= CFG.spamLimit) return false;
-    state.lastSentTimestamps.push(now);
-    return true;
-  }
-
-  function containsBannedWord(text) {
-    const words = state.settings.bannedWords || [];
-    const lower = text.toLowerCase();
-    return words.some(w => w && lower.includes(String(w).toLowerCase()));
-  }
-
-  function setStatus(text, isErr) {
-    els.statusLine.textContent = text || "";
-    els.statusLine.classList.toggle("err", !!isErr);
-    if (text) setTimeout(() => { if (els.statusLine.textContent === text) els.statusLine.textContent = ""; }, 4000);
-  }
-
-  function sendMessage() {
-    const avail = computeAvailability();
-    if (!avail.ok) { setStatus(avail.notice, true); return; }
-
-    const text = els.textInput.value.trim();
-    if (!text) return;
-    if (text.length > CFG.maxMessageLength) { setStatus("پیام خیلی طولانی است.", true); return; }
-    if (containsBannedWord(text)) { setStatus("این پیام شامل کلمات غیرمجاز است.", true); return; }
-
-    if (state.editTarget) {
-      const id = state.editTarget;
-      const m = state.messages[id];
-      if (m && m.uid === uid) {
-        ensureFirebase().ref("chat/messages/" + id).update({ text, edited: true });
-      }
-      state.editTarget = null;
-      els.textInput.value = "";
-      els.replyPreview.classList.remove("show");
-      autoGrow();
-      return;
-    }
-
-    if (!checkSpam()) { setStatus("سرعت ارسال بالاست، کمی صبر کنید.", true); return; }
-
-    const name = getName();
-    const payload = {
-      name, uid, text, time: Date.now()
-    };
-    if (state.replyTarget) payload.replyTo = state.replyTarget;
-
-    ensureFirebase().ref("chat/messages").push(payload)
-      .then(() => {
-        els.textInput.value = "";
-        autoGrow();
-        setReplyTarget(null);
-        ensureFirebase().ref("chat/typing/" + uid).remove();
-      })
-      .catch(() => setStatus("ارسال ناموفق بود.", true));
-  }
-
-  /* ---------- ارسال عکس (فشرده‌سازی سمت کاربر) ---------- */
-  function handleImagePick(e) {
-    const file = e.target.files[0];
-    e.target.value = "";
-    if (!file) return;
-    const avail = computeAvailability();
-    if (!avail.ok) { setStatus(avail.notice, true); return; }
-
-    const img = new Image();
-    const reader = new FileReader();
-    reader.onload = () => {
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let w = img.width, h = img.height;
-        if (w > CFG.imageMaxWidth) { h = h * (CFG.imageMaxWidth / w); w = CFG.imageMaxWidth; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-
-        let quality = 0.7;
-        let dataUrl = canvas.toDataURL("image/jpeg", quality);
-        while (dataUrl.length > CFG.imageMaxBytes * 1.37 && quality > 0.2) {
-          quality -= 0.1;
-          dataUrl = canvas.toDataURL("image/jpeg", quality);
-        }
-        if (dataUrl.length > CFG.imageMaxBytes * 1.37) {
-          setStatus("عکس بعد از فشرده‌سازی هنوز بزرگ است — عکس کوچک‌تری انتخاب کنید.", true);
-          return;
-        }
-        if (!checkSpam()) { setStatus("سرعت ارسال بالاست، کمی صبر کنید.", true); return; }
-
-        ensureFirebase().ref("chat/messages").push({
-          name: getName(), uid, text: "", imageData: dataUrl, time: Date.now()
-        }).catch(() => setStatus("ارسال عکس ناموفق بود.", true));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  /* ---------- شروع ---------- */
-  function init() {
-    buildDom();
-    ensureFirebase();
-    listenSettings();
-    listenBans();
-    setupPresence();
-    listenMessages();
-    listenTyping();
-    refreshAvailabilityUi();
-  }
-
-  window.addEventListener("load", init);
-
-})();
+      row.querySelector(".chat-re
