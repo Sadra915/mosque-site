@@ -473,6 +473,26 @@ footer{
     pointer-events:none;
 }
 
+/* LITE MODE */
+
+body.lite-mode::before,
+body.lite-mode::after{
+    animation:none !important;
+}
+
+body.lite-mode #tsparticles{
+    display:none !important;
+}
+
+body.lite-mode .card{
+    backdrop-filter:none !important;
+    transition:none !important;
+}
+
+body.lite-mode .card:hover{
+    transform:none !important;
+}
+
 </style>
 </head>
 
@@ -814,6 +834,8 @@ document
 .getElementById("msg")
 .innerHTML = data.message;
 
+renderStatusBanner(data.status);
+
 /* CONFIGS */
 
 const configs =
@@ -860,6 +882,7 @@ ${cfg.remark ? " • "+cfg.remark : ""}
 configs.appendChild(box);
 
 renderRatingWidget(box, cfg.link);
+addBrokenReportButton(box, cfg.link);
 
 });
 
@@ -914,6 +937,9 @@ typeIntro();
 loadData();
 
 setInterval(loadData,20000);
+
+initLiteMode();
+initVisitorStats(document.getElementById("msg").parentElement);
 
 setTimeout(()=>beep(300,.1),100);
 setTimeout(()=>beep(600,.1),260);
@@ -978,6 +1004,9 @@ tsParticles.load("tsparticles", {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="ratings.js"></script>
+
+<!-- EXTRA FEATURES: status banner, lite mode, visitor stats, broken report -->
+<script src="site-features.js"></script>
 
 </body>
 </html>
