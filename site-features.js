@@ -41,7 +41,7 @@ function initLiteMode(){
   const btn = document.createElement("button");
   btn.id = "liteToggle";
   btn.style.cssText = `
-    position:fixed;bottom:18px;left:18px;z-index:9998;
+    position:fixed;bottom:18px;right:18px;z-index:9998;
     background:#0b0d10;border:1px solid rgba(0,255,157,.35);color:var(--neon);
     border-radius:20px;padding:8px 14px;font-size:13px;cursor:pointer;
   `;
