@@ -1,0 +1,207 @@
+/* =========================================================
+   استایل پروفایل کاربری + انیمیشن نشان‌ها (تیک آبی / VIP)
+   ========================================================= */
+
+.pf-panel{
+  position:fixed;
+  inset:0;
+  z-index:10003;
+  background:#0a0d10;
+  display:none;
+  flex-direction:column;
+  font-family:monospace;
+  color:#00ff9d;
+}
+
+.pf-panel.open{ display:flex; }
+
+.pf-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 18px;
+  border-bottom:1px solid rgba(0,255,157,.2);
+  background:linear-gradient(90deg, rgba(255,122,0,.1), rgba(0,255,157,.1));
+  flex-shrink:0;
+}
+
+.pf-head-title{ font-weight:bold; font-size:15px; }
+
+.pf-body{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 20px;
+  max-width:480px;
+  margin:0 auto;
+  width:100%;
+}
+
+.pf-avatar-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.pf-avatar{
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  background:linear-gradient(135deg, #0f3d33, #00ff9d33);
+  border:2px solid rgba(0,255,157,.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  font-weight:bold;
+  color:#00ff9d;
+}
+
+.pf-avatar-vip{
+  border-color:#ffd700;
+  box-shadow:0 0 18px rgba(255,215,0,.5);
+  animation:pfVipGlow 2.2s ease-in-out infinite;
+}
+
+@keyframes pfVipGlow{
+  0%,100%{ box-shadow:0 0 12px rgba(255,215,0,.35); }
+  50%{ box-shadow:0 0 26px rgba(255,215,0,.75); }
+}
+
+.pf-name{
+  text-align:center;
+  font-size:19px;
+  font-weight:bold;
+  margin-top:4px;
+}
+
+.pf-username{
+  text-align:center;
+  font-size:13px;
+  opacity:.6;
+  margin-top:2px;
+}
+
+.pf-badge-note{
+  text-align:center;
+  font-size:12px;
+  margin-top:8px;
+  opacity:.85;
+}
+
+.pf-field{
+  margin-top:18px;
+}
+
+.pf-field label{
+  display:block;
+  font-size:12px;
+  opacity:.7;
+  margin-bottom:5px;
+}
+
+.pf-field input,
+.pf-field textarea{
+  width:100%;
+  background:#0b0d10;
+  border:1px solid rgba(0,255,157,.3);
+  color:#00ff9d;
+  border-radius:8px;
+  padding:9px 12px;
+  font-family:monospace;
+  font-size:13px;
+}
+
+.pf-field textarea{ min-height:70px; resize:vertical; }
+
+.pf-bio{
+  line-height:1.8;
+  font-size:13.5px;
+  background:rgba(0,255,157,.04);
+  border:1px solid rgba(0,255,157,.12);
+  border-radius:10px;
+  padding:10px 12px;
+}
+
+.pf-divider{
+  height:1px;
+  background:rgba(0,255,157,.15);
+  margin:22px 0;
+}
+
+.pf-btn{
+  width:100%;
+  background:#00ff9d;
+  color:#000;
+  border:none;
+  border-radius:10px;
+  padding:10px;
+  font-weight:bold;
+  cursor:pointer;
+  font-family:monospace;
+  margin-top:8px;
+}
+
+.pf-btn:hover{ background:#ff7a00; color:#fff; }
+
+/* ---------- نشان‌ها (قابل استفاده هرجای سایت: چت، پروفایل، اینباکس) ---------- */
+.pf-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  vertical-align:middle;
+}
+
+.pf-badge-verified{
+  width:18px;
+  height:18px;
+}
+
+.pf-badge-verified.pf-badge-large{
+  width:30px;
+  height:30px;
+}
+
+.pf-badge-icon{
+  width:100%;
+  height:100%;
+  fill:#3ba9ff;
+  filter:drop-shadow(0 0 4px rgba(59,169,255,.7));
+  animation:pfVerifiedPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pfVerifiedPulse{
+  0%,100%{ filter:drop-shadow(0 0 3px rgba(59,169,255,.55)); }
+  50%{ filter:drop-shadow(0 0 9px rgba(59,169,255,.95)); }
+}
+
+.pf-badge-vip{
+  font-size:11px;
+  font-weight:bold;
+  padding:1px 7px;
+  border-radius:10px;
+  background:linear-gradient(90deg, #ffd700, #fff6cc, #ffd700);
+  background-size:200% 100%;
+  color:#5a4400;
+  animation:pfVipShine 2.5s linear infinite;
+}
+
+.pf-badge-vip.pf-badge-large{
+  font-size:15px;
+  padding:3px 12px;
+}
+
+@keyframes pfVipShine{
+  0%{ background-position:0% 50%; }
+  100%{ background-position:200% 50%; }
+}
+
+/* اسم کاربر قابل کلیک برای باز کردن پروفایل، در چت و همه‌جای دیگر */
+.pf-clickable-name{
+  cursor:pointer;
+}
+
+.pf-clickable-name:hover{
+  text-decoration:underline;
+}
