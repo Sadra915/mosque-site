@@ -48,6 +48,7 @@
 
           <div id="authLoggedInArea" style="display:none;">
             <p class="auth-status" id="authStatusText"></p>
+            <button id="authProfileBtn" class="auth-submit">👤 پروفایل من</button>
             <button id="authResendBtn" class="auth-submit">📩 ارسال دوباره‌ی ایمیل تایید</button>
             <button id="authLogoutBtn" class="auth-submit auth-danger">🚪 خروج از حساب</button>
             <div class="auth-msg" id="authMsg2"></div>
@@ -65,6 +66,7 @@
       close: document.getElementById("authClose"),
       loggedOutArea: document.getElementById("authLoggedOutArea"),
       loggedInArea: document.getElementById("authLoggedInArea"),
+      profileBtn: document.getElementById("authProfileBtn"),
       nameField: document.getElementById("authNameField"),
       nameInput: document.getElementById("authNameInput"),
       emailInput: document.getElementById("authEmailInput"),
@@ -93,6 +95,16 @@
     els.forgotLink.onclick = handleForgot;
     els.resendBtn.onclick = handleResend;
     els.logoutBtn.onclick = handleLogout;
+    els.profileBtn.onclick = () => {
+      els.modal.classList.remove("show");
+      if (window.Profile && window.Auth) {
+        const state = { user: null };
+        // از AUTH_STATE سراسری استفاده می‌کنیم
+        if (window.AUTH_STATE && window.AUTH_STATE.user) {
+          window.Profile.open(window.AUTH_STATE.user.uid);
+        }
+      }
+    };
   }
 
   function switchMode(newMode) {
