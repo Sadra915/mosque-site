@@ -1,0 +1,177 @@
+/* =========================================================
+   استایل پیام خصوصی - هماهنگ با تم Cyber Neon سایت
+   ========================================================= */
+
+.pm-trigger{
+  position:fixed;
+  top:14px;
+  left:170px;
+  z-index:9997;
+  background:rgba(5,6,7,.9);
+  border:1px solid rgba(0,255,157,.4);
+  color:#00ff9d;
+  font-family:monospace;
+  font-weight:bold;
+  font-size:12px;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  display:none;
+  align-items:center;
+  gap:6px;
+}
+
+.pm-trigger:hover{
+  border-color:#ff7a00;
+  color:#ff7a00;
+}
+
+@media (max-width:600px){
+  .pm-trigger{
+    left:14px;
+    top:56px;
+  }
+}
+
+.pm-panel{
+  position:fixed;
+  inset:0;
+  z-index:10002;
+  background:#0a0d10;
+  display:none;
+  flex-direction:column;
+  font-family:monospace;
+  color:#00ff9d;
+  font-size:14.5px;
+}
+
+.pm-panel.open{ display:flex; }
+
+.pm-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 18px;
+  border-bottom:1px solid rgba(0,255,157,.2);
+  background:linear-gradient(90deg, rgba(255,122,0,.1), rgba(0,255,157,.1));
+  flex-shrink:0;
+  position:relative;
+}
+
+.pm-head-title{
+  flex:1;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.pm-head-actions{
+  display:flex;
+  gap:8px;
+}
+
+.pm-thread-menu{
+  display:none;
+  position:absolute;
+  top:56px;
+  left:18px;
+  background:#0b0d10;
+  border:1px solid rgba(0,255,157,.3);
+  border-radius:12px;
+  padding:6px;
+  z-index:20;
+  min-width:170px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+
+.pm-thread-menu.show{ display:block; }
+
+.pm-thread-menu > div{
+  padding:9px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.pm-thread-menu > div:hover{
+  background:rgba(0,255,157,.08);
+}
+
+.pm-body{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:16px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.pm-inbox-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 14px;
+  border:1px solid rgba(0,255,157,.15);
+  border-radius:12px;
+  cursor:pointer;
+  background:rgba(0,255,157,.03);
+}
+
+.pm-inbox-row:hover{
+  background:rgba(0,255,157,.07);
+}
+
+.pm-inbox-name{
+  font-weight:bold;
+}
+
+.pm-inbox-time{
+  font-size:11px;
+  opacity:.6;
+}
+
+.pm-report-box{
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding:14px 18px;
+  border-top:1px solid rgba(255,122,0,.3);
+  background:rgba(255,122,0,.06);
+}
+
+.pm-report-box.show{ display:flex; }
+
+.pm-report-box label{
+  font-size:12px;
+  opacity:.8;
+}
+
+.pm-report-box select,
+.pm-report-box textarea{
+  background:#0b0d10;
+  border:1px solid rgba(0,255,157,.3);
+  color:#00ff9d;
+  border-radius:8px;
+  padding:8px 10px;
+  font-family:monospace;
+  font-size:13px;
+}
+
+.pm-report-box textarea{ min-height:60px; resize:vertical; }
+
+.pm-report-box button{
+  background:#00ff9d;
+  color:#000;
+  border:none;
+  border-radius:10px;
+  padding:9px;
+  font-weight:bold;
+  cursor:pointer;
+  font-family:monospace;
+}
+
+.pm-report-box button.auth-danger-like{
+  background:transparent;
+  border:1px solid #ff4d4d;
+  color:#ff4d4d;
+}
