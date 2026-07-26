@@ -205,10 +205,12 @@
   function ensureChatMeta(chatId, peerUid) {
     const uid = myUid();
     const metaRef = ensureDb().ref("privateChats/" + chatId + "/meta");
-    return metaRef.once("value").then((snap) => {
-      if (snap.exists()) return;
-      return metaRef.set({ participants: { [uid]: true, [peerUid]: true }, createdAt: Date.now() });
-    });
+    return metaRef.set({ participants: { [uid]: true, [peerUid]: true }, createdAt: Date.now() })
+      .catch((err) => {
+        // اگه از قبل ساخته شده، نوشتن رد می‌شه — این طبیعیه، مشکلی نیست
+        if (err && (err.code === "PERMISSION_DENIED" || /permission_denied/i.test(err.message || ""))) return;
+        throw err;
+      });
   }
 
   function registerInMyInbox(chatId, peerUid, peerName) {
